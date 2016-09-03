@@ -470,3 +470,97 @@ cm.createSettingsFrame = function()
     cm.settingsFrame:SetAlpha( 0 )
     cm.settingsFrame:AlphaTo( 255, 0.5, 0 )
 end
+
+BUTTON = {}
+
+function BUTTON:Init()
+    self:SetText( "" )
+end
+
+function BUTTON:setText( text )
+    self.textText = text
+end
+
+function BUTTON:getText()
+    return self.textText
+end
+
+function BUTTON:setDesc( desc )
+    self.descText = desc
+end
+
+function BUTTON:getDesc()
+    return self.descText
+end
+
+function BUTTON:setJoinText( text )
+    self.joinText = text
+end
+
+function BUTTON:getJoinText()
+    return self.joinText
+end
+function BUTTON:setServerIcon( mat )
+    self.serverIcon = mat
+end
+
+function BUTTON:getServerIcon()
+    return self.serverIcon
+end
+
+function BUTTON:setUp()
+    self.topPanel = self:Add( "DPanel" )
+    self.topPanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+
+    local icon = self:getServerIcon()
+    self.topPanel.PaintOver = function( pnl, w, h )
+        surface.SetDrawColor( 255, 255, 255, 255 )
+        surface.SetMaterial( icon )
+        surface.DrawTexturedRect( 0, 0, w, h )
+    end
+
+    self.bottomPanel = self:Add( "DPanel" )
+    self.bottomPanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+    self.bottomPanel:SetPos( 0, self:GetTall() / 2 )
+
+    self.bottomPanel.boxY = self.bottomPanel:GetTall()
+    self.bottomPanel.textCol = 255
+    self.bottomPanel.Paint = function( pnl, w, h )
+
+        pnl.boxY = math.Clamp( pnl:IsHovered() and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
+        pnl.textCol = math.Clamp( pnl:IsHovered() and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
+
+        draw.RoundedBox( 0, 0, pnl.boxY, w, h, color_white )
+        draw.RoundedBox( 0, 0, h - 32, w, 1, Color( 150, 150, 150, 255 ) )
+
+        draw.SimpleText( self.joinText or "JOIN", "cmMedium", w / 2, h - 4, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+        draw.SimpleText( self.textText or "SERVER NAME", "cmMedium", 12, 10, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ) )
+
+        draw.SimpleText( self.descText or "A garry's mod server.", "cmSmall", 12, 36, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ) )
+    end
+end
+
+function BUTTON:Paint( w, h )
+    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 75 ) )
+        surface.SetMaterial( blur )
+        surface.SetDrawColor( 255, 255, 255 )
+
+        local x, y = self:LocalToScreen( 0, 0 )
+
+        for i = 2, 1, 0.2 do
+            blur:SetFloat( "$blur", i * 5 )
+            blur:Recompute()
+
+            render.UpdateScreenEffectTexture()
+            surface.DrawTexturedRect( x * - 1, y * - 1, ScrW(), ScrH() )
+        end
+end
+
+function BUTTON:PaintOver()
+    local pressed = self.Depressed or self.m_bSelected
+
+    self.xOverride, self.yOverride = pressed and 1 or nil, pressed and 1 or nil
+    self.wOverride, self.hOverride = pressed and ( self:GetWide() - 2 ) or nil, pressed and ( self:GetTall() - 2 ) or nil
+end
+
+derma.DefineControl( "centralMenuServerButton", nil, BUTTON, "DButton" )

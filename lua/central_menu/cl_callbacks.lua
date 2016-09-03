@@ -14,6 +14,35 @@ cm.addDataCheck( "callback", function( data, frame )
     if data.callback then data.callback( frame.panel ) end
 end )
 
+cm.addDataCheck( "servers", function( data, frame )
+    local servers = data.servers
+    if not servers then return end
+
+    local label = frame.panel:Add( "DLabel" )
+    label:SetText( "Click one of the server buttons to connect to one of our servers!" )
+    label:SetFont( "cmLargeThin" )
+    label:SetTextColor( color_white )
+    label:Dock( TOP )
+    label:DockMargin( 0, 0, 0, 12 )
+    label:SizeToContents()
+
+    local layout = frame.panel:Add( "DIconLayout" )
+    layout:Dock( FILL )
+    layout:SetSpaceX( 4 )
+    layout:SetSpaceY( 4 )
+
+    for serverName, data in pairs( servers ) do
+        local server = layout:Add( "centralMenuServerButton" )
+        server:SetSize( 320, 256 )
+        server:setText( serverName )
+        server:setDesc( data.desc )
+        server:setJoinText( data.joinText )
+        server:setServerIcon( data.icon )
+
+        server:setUp()
+    end
+end )
+
 cm.addDataCheck( "showGreeting", function( data, frame )
     local time = os.time()
     local day = os.date( "%A", time )

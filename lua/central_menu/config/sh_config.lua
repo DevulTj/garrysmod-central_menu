@@ -35,6 +35,25 @@ cm.config.ELEMENTS = {
         customCheck = function( client, panel ) return false end,
     },
     {
+        name = "SERVERS",
+        servers = {
+            [ "DARKRP" ] = {
+                icon = Material( "cm/server_icon.png" ),
+                ip = "127.0.0.1",
+                desc = "One of our servers.",
+
+                joinText = "JOIN"
+            },
+            [ "TTT" ] = {
+                icon = Material( "cm/server_icon_2.png" ),
+                ip = "127.0.0.1",
+                desc = "Another one of our servers.",
+
+                joinText = "JOIN"
+            }
+        }
+    },
+    {
         name = "RULES",
         showURL = cm.config.COMMUNITY_RULES_URL
     },

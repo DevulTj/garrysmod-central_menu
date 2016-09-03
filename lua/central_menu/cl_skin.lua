@@ -18,3 +18,10 @@ surface.CreateFont( "cmMedium", {
 	weight = 500,
 	antialias = true
 } )
+
+surface.CreateFont( "cmSmall", {
+	font = cm.config.STYLE.FONT_FACE,
+	size = 16,
+	weight = 500,
+	antialias = true
+} )
