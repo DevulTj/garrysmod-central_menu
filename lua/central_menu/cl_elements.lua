@@ -256,7 +256,7 @@ function FRAME:setUp()
     self.avatarClick.DoClick = function() end
 
     local firstElement = cm.config.ELEMENTS[ 1 ]
-    if firstElement and firstElement.callback then firstElement.callback( self.panel ) end
+    if firstElement then cm.getCallback( firstElement, self ) end
 
     self.panel:SetAlpha( 0 )
     self.panel:AlphaTo( 255, 0.5, 0 )

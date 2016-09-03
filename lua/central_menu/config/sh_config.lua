@@ -24,18 +24,7 @@ cm.config.STYLE = {
 cm.config.ELEMENTS = {
     {
         name = "HOME",
-        callback = function( panel )
-            local time = os.time()
-            local day = os.date( "%A", time )
-
-            local label = panel:Add( "DLabel" )
-            label:SetText( "Happy " .. day .. " " .. LocalPlayer():Nick() .. "." )
-            label:SetFont( "cmLargeThin" )
-            label:SetTextColor( color_white )
-            label:SetContentAlignment( 5 )
-            label:SetHeight( 20 )
-            label:SizeToContents()
-        end
+        showGreeting = true
     },
     {
         name = "FORUMS",
@@ -43,7 +32,6 @@ cm.config.ELEMENTS = {
     },
     {
         name = "STAFF",
-        callback = function( panel ) end,
         customCheck = function( client, panel ) return false end,
     },
     {

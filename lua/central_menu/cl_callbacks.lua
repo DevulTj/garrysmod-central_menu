@@ -14,6 +14,19 @@ cm.addDataCheck( "callback", function( data, frame )
     if data.callback then data.callback( frame.panel ) end
 end )
 
+cm.addDataCheck( "showGreeting", function( data, frame )
+    local time = os.time()
+    local day = os.date( "%A", time )
+
+    local label = frame.panel:Add( "DLabel" )
+    label:SetText( "Happy " .. day .. " " .. LocalPlayer():Nick() .. "." )
+    label:SetFont( "cmLargeThin" )
+    label:SetTextColor( color_white )
+    label:SetContentAlignment( 5 )
+    label:SetHeight( 20 )
+    label:SizeToContents()
+end )
+
 function cm.getCallback( data, frame )
     if not data then return end
     if not IsValid( frame ) then return end
