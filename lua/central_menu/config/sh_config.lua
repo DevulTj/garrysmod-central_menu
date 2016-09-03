@@ -3,8 +3,7 @@ cm.config = cm.config or {}
 cm.config.MENU_KEY = "F1"
 
 cm.config.COMMUNITY_NAME = "My Community"
-cm.config.COMMUNITY_URL = "https://google.co.uk"
-cm.config.COMMUNITY_FORUMS_URL = "https://google.co.uk"
+cm.config.COMMUNITY_FORUMS_URL = "https://google.nl"
 cm.config.COMMUNITY_RULES_URL = "https://google.co.uk"
 
 cm.config.MAIN_COLOR = Color( 255, 75, 75 )
@@ -40,11 +39,7 @@ cm.config.ELEMENTS = {
     },
     {
         name = "FORUMS",
-        callback = function( panel )
-            local html = panel:Add( "HTML" )
-            html:Dock( FILL )
-            html:OpenURL( cm.config.COMMUNITY_FORUMS_URL )
-        end
+        showURL = cm.config.COMMUNITY_FORUMS_URL
     },
     {
         name = "STAFF",
@@ -53,10 +48,6 @@ cm.config.ELEMENTS = {
     },
     {
         name = "RULES",
-        callback = function( panel )
-            local html = panel:Add( "HTML" )
-            html:Dock( FILL )
-            html:OpenURL( cm.config.COMMUNITY_RULES_URL )
-        end
+        showURL = cm.config.COMMUNITY_RULES_URL
     },
 }

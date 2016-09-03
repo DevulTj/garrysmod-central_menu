@@ -8,6 +8,8 @@
 
 cm.Include( "config/sh_config.lua" )
 
+cm.Include( "cl_callbacks.lua" )
+
 cm.Include( "cl_skin.lua" )
 cm.Include( "cl_elements.lua" )
 

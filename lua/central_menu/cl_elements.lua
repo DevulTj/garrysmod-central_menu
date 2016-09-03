@@ -1,5 +1,6 @@
 local FRAME = {}
 local gradient = Material( "gui/gradient" )
+local glowMat = Material( "particle/Particle_Glow_04_Additive" )
 
 function FRAME:Init()
     self:StretchToParent( 0, 0, 0, 0 )
@@ -91,7 +92,14 @@ function FRAME:setUp()
         button:Dock( LEFT )
         button:SetWide( buttonW )
         button:SetFont( "cmLarge" )
-        button.Paint = function() end
+
+        button.alpha = 0
+        button.Paint = function( pnl, w, h )
+            pnl.alpha = math.Clamp( pnl:IsHovered() and pnl.alpha + 5 or pnl.alpha - 5, 0, 75 )
+            surface.SetDrawColor( Color( 255, 255, 255, pnl.alpha ) )
+            surface.SetMaterial( glowMat )
+            surface.DrawTexturedRect( 0, 0, w, h * 1.2 )
+        end
 
         local customCheck = data.customCheck and data.customCheck( LocalPlayer(), button )
         button:SetDisabled( customCheck == false )
@@ -111,7 +119,7 @@ function FRAME:setUp()
                 self.panel:Clear()
                 self.panel:AlphaTo( 255, 0.5, 0 )
 
-                if data.callback then data.callback( self.panel ) end
+                cm.getCallback( data, self )
             end )
 
             self.buttonUnderWidget:MoveTo( 68 + ( buttonW * Id ), 24 + 20 + pnl:GetTall(), 0.5, 0, -1 )
