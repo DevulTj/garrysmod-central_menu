@@ -16,6 +16,7 @@ end )
 
 function cm.getCallback( data, frame )
     if not data then return end
+    if not IsValid( frame ) then return end
 
     for var, callback in pairs( cm.dataChecks ) do
         if data[ var ] then callback( data, frame ) end
