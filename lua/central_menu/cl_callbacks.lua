@@ -38,6 +38,7 @@ cm.addDataCheck( "servers", function( data, frame )
         server:setDesc( data.desc )
         server:setJoinText( data.joinText )
         server:setServerIcon( data.icon )
+        server:setIP( data.ip )
 
         server:setUp()
     end

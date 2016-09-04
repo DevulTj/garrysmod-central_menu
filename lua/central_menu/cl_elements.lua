@@ -1,5 +1,6 @@
 local FRAME = {}
 local gradient = Material( "gui/gradient" )
+local gradientr = Material( "vgui/gradient-r" )
 local glowMat = Material( "particle/Particle_Glow_04_Additive" )
 
 function FRAME:Init()
@@ -42,9 +43,13 @@ function FRAME:setUp()
 
         draw.RoundedBox( 0, 0, 0, w, h, Color( color.r * pnl.amount, color.g * pnl.amount, color.b * pnl.amount, 255 ) )
 
-		surface.SetDrawColor( cm.config.GRADIENT_COLOR )
-		surface.SetMaterial( gradient )
-		surface.DrawTexturedRect( 0, 0, w, h )
+		surface.SetDrawColor( color_white )
+		surface.SetMaterial( cm.config.BACKGROUND_MATERIAL )
+		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+
+        surface.SetDrawColor( color )
+        surface.SetMaterial( gradientr )
+        surface.DrawTexturedRect( ScrW() * 0.75, 0, ScrW() * 0.25, h )
     end
 
     self.leftLayout = self:Add( "DIconLayout" )
@@ -112,7 +117,7 @@ function FRAME:setUp()
         	return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_COLOR )
         end
 
-        local increaseAmount = ScrW() / 3
+        local increaseAmount = ScrW() / 6
         button.DoClick = function( pnl )
             self.panel:AlphaTo( 0, 0.5, 0 )
             self.background:MoveTo( - ( increaseAmount * ( Id - 1 ) ), nil, 0.5, 0, -1, function()
@@ -500,6 +505,7 @@ end
 function BUTTON:getJoinText()
     return self.joinText
 end
+
 function BUTTON:setServerIcon( mat )
     self.serverIcon = mat
 end
@@ -508,27 +514,35 @@ function BUTTON:getServerIcon()
     return self.serverIcon
 end
 
+function BUTTON:setIP( ip )
+    self.ip = ip
+end
+
+function BUTTON:getIP()
+    return self.ip
+end
+
 function BUTTON:setUp()
     self.topPanel = self:Add( "DPanel" )
     self.topPanel:SetSize( self:GetWide(), self:GetTall() / 2 )
 
-    local icon = self:getServerIcon()
-    self.topPanel.PaintOver = function( pnl, w, h )
-        surface.SetDrawColor( 255, 255, 255, 255 )
-        surface.SetMaterial( icon )
-        surface.DrawTexturedRect( 0, 0, w, h )
-    end
-
-    self.bottomPanel = self:Add( "DPanel" )
+    self.bottomPanel = self:Add( "DButton" )
+    self.bottomPanel:SetText( "" )
     self.bottomPanel:SetSize( self:GetWide(), self:GetTall() / 2 )
     self.bottomPanel:SetPos( 0, self:GetTall() / 2 )
 
     self.bottomPanel.boxY = self.bottomPanel:GetTall()
     self.bottomPanel.textCol = 255
-    self.bottomPanel.Paint = function( pnl, w, h )
 
-        pnl.boxY = math.Clamp( pnl:IsHovered() and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
-        pnl.textCol = math.Clamp( pnl:IsHovered() and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
+    local topPanelW, topPanelH = self.topPanel:GetSize()
+
+    local nextClickDelay = 1
+    local nextClick = CurTime()
+    self.bottomPanel.Paint = function( pnl, w, h )
+        local hovered = pnl:IsHovered()
+
+        pnl.boxY = math.Clamp( hovered and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
+        pnl.textCol = math.Clamp( hovered and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
 
         draw.RoundedBox( 0, 0, pnl.boxY, w, h, color_white )
         draw.RoundedBox( 0, 0, h - 32, w, 1, Color( 150, 150, 150, 255 ) )
@@ -538,22 +552,39 @@ function BUTTON:setUp()
 
         draw.SimpleText( self.descText or "A garry's mod server.", "cmSmall", 12, 36, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ) )
     end
+
+    local icon = self:getServerIcon()
+
+    self.topPanel.iconW, self.topPanel.iconH = self.topPanel:GetSize()
+    self.topPanel.PaintOver = function( pnl, w, h )
+        local hovered = self.bottomPanel:IsHovered()
+        pnl.iconW = math.Clamp( hovered and ( pnl.iconW + 0.25 ) or ( pnl.iconW - 0.25 ), self.topPanel:GetWide(), self.topPanel:GetWide() * 1.02 )
+        pnl.iconH = math.Clamp( hovered and ( pnl.iconH + 0.25 ) or ( pnl.iconH - 0.25 ), self.topPanel:GetTall(), self.topPanel:GetTall() * ( 1 + ( 0.02 * ( self.topPanel:GetWide() / self.topPanel:GetTall() ) ) ) )
+
+        surface.SetDrawColor( 255, 255, 255, 255 )
+        surface.SetMaterial( icon )
+        surface.DrawTexturedRect( 0, 0, pnl.iconW, pnl.iconH )
+    end
+
+    self.bottomPanel.DoClick = function( pnl )
+        cm.createDialogue( "JOIN SERVER", "Do you want join " .. self.textText .. "?" , "Yes", function( dialogue ) dialogue:Close() RunConsoleCommand( "connect", self:getIP() ) end, "No", function( dialogue ) dialogue:Close() end )
+    end
 end
 
 function BUTTON:Paint( w, h )
     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 75 ) )
-        surface.SetMaterial( blur )
-        surface.SetDrawColor( 255, 255, 255 )
+    surface.SetMaterial( blur )
+    surface.SetDrawColor( 255, 255, 255 )
 
-        local x, y = self:LocalToScreen( 0, 0 )
+    local x, y = self:LocalToScreen( 0, 0 )
 
-        for i = 2, 1, 0.2 do
-            blur:SetFloat( "$blur", i * 5 )
-            blur:Recompute()
+    for i = 2, 1, 0.2 do
+        blur:SetFloat( "$blur", i * 5 )
+        blur:Recompute()
 
-            render.UpdateScreenEffectTexture()
-            surface.DrawTexturedRect( x * - 1, y * - 1, ScrW(), ScrH() )
-        end
+        render.UpdateScreenEffectTexture()
+        surface.DrawTexturedRect( x * - 1, y * - 1, ScrW(), ScrH() )
+    end
 end
 
 function BUTTON:PaintOver()

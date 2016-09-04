@@ -6,7 +6,9 @@ cm.config.COMMUNITY_NAME = "My Community"
 cm.config.COMMUNITY_FORUMS_URL = "https://google.nl"
 cm.config.COMMUNITY_RULES_URL = "https://google.co.uk"
 
-cm.config.MAIN_COLOR = Color( 255, 75, 75 )
+cm.config.BACKGROUND_MATERIAL = Material( "cm/gmod_background.jpg" )
+
+cm.config.MAIN_COLOR = Color( 25, 25, 25 )
 cm.config.GRADIENT_COLOR = Color( 0, 0, 0, 255 )
 cm.config.BACKGROUND_COLOR_INCREMENTS = 0.008
 
