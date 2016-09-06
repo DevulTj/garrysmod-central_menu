@@ -24,11 +24,27 @@ function FRAME:Paint()
     if self.nextClose and self.nextClose > CurTime() then return end
 
     if input.IsKeyDown( FKeyToKeyEnum[ cm.config.MENU_KEY ] or "" ) or input.IsKeyDown( KEY_ESCAPE ) then
-    	if self.background and not self.background.reverseFade then
-    		self.background.reverseFade = true
+    	if not self.isFadingOut then
+    		self:fadeOut()
     	end
     end
 end
+
+local fade = function( self )
+    self:AlphaTo( 0, cm.config.FADE_TIME, 0, function() self.isFadingOut = false self:Close() end )
+end
+
+function FRAME:fadeOut()
+    self.isFadingOut = true
+
+    local x, y = self.background:GetPos()
+    if x == 0 and y == 0 then fade( self ) return end
+
+    self.background:MoveTo( 0, 0, 0.3, 0, -1, function()
+        fade( self )
+    end )
+end
+
 
 function FRAME:setUp()
     self.background = self:Add( "DPanel" )
@@ -36,18 +52,18 @@ function FRAME:setUp()
 
     self.background.amount = cm.config.BACKGROUND_COLOR_INCREMENTS
     local color = cm.config.MAIN_COLOR or color_white
-    self.background.reverseFade = false
+
     self.background.Paint = function( pnl, w, h )
-        pnl.amount = math.Clamp( self.background.reverseFade and ( pnl.amount - cm.config.BACKGROUND_COLOR_INCREMENTS ) or ( pnl.amount + cm.config.BACKGROUND_COLOR_INCREMENTS ), 0, 1 )
-        if not pnl.isFading and pnl.amount == 0 then pnl.isFading = true self:AlphaTo( 0, cm.config.FADE_TIME, 0, function() self:Close() end ) end
+        draw.RoundedBox( 0, 0, 0, w, h, color )
+        draw.RoundedBox( 0, ScrW(), 0, w - ScrW(), h, cm.config.GRADIENT_COLOR )
 
-        draw.RoundedBox( 0, 0, 0, w, h, Color( color.r * pnl.amount, color.g * pnl.amount, color.b * pnl.amount, 255 ) )
+        if not cm.config.BACKGROUND_MATERIAL_DISABLED then
+    		surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
+    		surface.SetMaterial( cm.config.BACKGROUND_MATERIAL )
+    		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+        end
 
-		surface.SetDrawColor( color_white )
-		surface.SetMaterial( cm.config.BACKGROUND_MATERIAL )
-		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
-
-        surface.SetDrawColor( color )
+        surface.SetDrawColor( cm.config.GRADIENT_COLOR )
         surface.SetMaterial( gradientr )
         surface.DrawTexturedRect( ScrW() * 0.75, 0, ScrW() * 0.25, h )
     end
@@ -166,7 +182,7 @@ function FRAME:setUp()
     end
 
     self.closeBtn.DoClick = function( pnl )
-        self.background.reverseFade = true
+        self:fadeOut()
     end
 
     self.closeLabel = self:Add( "DButton" )
@@ -234,7 +250,7 @@ function FRAME:setUp()
     end
 
     self.closeBtn.DoClick = function( pnl )
-        cm.createDialogue( "CLOSE", "Do you want to close?", "Yes", function( dialogue ) dialogue:Close() self.background.reverseFade = true end, "No", function( dialogue ) dialogue:Close() end )
+        cm.createDialogue( "CLOSE", "Do you want to close?", "Yes", function( dialogue ) dialogue:Close() self:fadeOut() end, "No", function( dialogue ) dialogue:Close() end )
     end
 
     self.settingsBtn.DoClick = function( pnl )
@@ -282,7 +298,7 @@ end
 cm.close = function()
     if not IsValid( cm.frame ) then return end
 
-    cm.frame.background.reverseFade = true
+    cm.frame:fadeOut()
 end
 
 local BUTTON = {}
