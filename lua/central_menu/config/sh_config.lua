@@ -22,6 +22,8 @@ cm.config.STYLE = {
     BUTTON_DOWN_COLOR = Color( 215, 215, 215 ),
 }
 
+cm.config.ELEMENT_TITLE_FORCE_UPPERCASE = true 
+
 cm.registerElement( "HOME", {
     showGreeting = true
 })
