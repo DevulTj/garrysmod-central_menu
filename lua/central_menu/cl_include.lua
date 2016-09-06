@@ -12,6 +12,8 @@ cm.config.ELEMENTS = {}
 cm.registerElement = function( name, data )
     data = data or {}
     data.name = name
+    
+    if cm.ELEMENT_TITLE_FORCE_UPPERCASE then data.name = string.upper( data.name ) end
 
     return table.insert( cm.config.ELEMENTS, data )
 end
