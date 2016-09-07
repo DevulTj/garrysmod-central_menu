@@ -7,6 +7,8 @@ cm.config.COMMUNITY_RULES_URL = "https://google.co.uk"
 cm.config.BACKGROUND_MATERIAL_DISABLED = false
 cm.config.BACKGROUND_MATERIAL = Material( "cm/gmod_background.jpg" )
 
+cm.config.ELEMENT_TITLE_FORCE_UPPERCASE = true
+
 cm.addConfig( "theme_elements_color", Color( 255, 255, 255 ), "The theme's element's colour", nil, { category = "appearance" } )
 cm.addConfig( "theme_elements_widget_color", Color( 255, 255, 255 ), "The theme's element's theme widget colour", nil, { category = "appearance" } )
 
@@ -60,6 +62,6 @@ cm.registerElement( "SERVERS", {
     }
 })
 
-cm.registerElement( "STAFF", {
+cm.registerElement( "RULES", {
     showURL = cm.config.COMMUNITY_RULES_URL
 })

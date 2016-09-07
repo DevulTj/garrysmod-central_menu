@@ -348,8 +348,7 @@ end
 
 local blur = Material( "pp/blurscreen" )
 function FRAME:Paint( w, h )
-
-    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ))
+    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ) )
 
     surface.SetMaterial( blur )
     surface.SetDrawColor( 255, 255, 255 )
@@ -566,8 +565,8 @@ function FRAME:setUp()
 				elseif form == "Boolean" then
 					value = util.tobool( value )
 				end
-                cm.setData( k, value )
 
+                cm.setData( k, value )
                 if v.callback then v.callback( beforeVal, value ) end
             end
         end
@@ -652,7 +651,7 @@ function BUTTON:setUp()
         pnl.boxY = math.Clamp( hovered and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
         pnl.textCol = math.Clamp( hovered and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
 
-        draw.RoundedBox( 0, 0, pnl.boxY, w, h, color_white )
+        draw.RoundedBox( 0, 0, pnl.boxY, w, h, cm.getData( "button_bg_color" ) )
         draw.RoundedBox( 0, 0, h - 32, w, 1, Color( 150, 150, 150, 255 ) )
 
         draw.SimpleText( self.joinText or "JOIN", "cmMedium", w / 2, h - 4, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
