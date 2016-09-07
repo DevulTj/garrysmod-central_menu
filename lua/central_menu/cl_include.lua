@@ -16,11 +16,13 @@ cm.registerElement = function( name, data )
     return table.insert( cm.config.ELEMENTS, data )
 end
 
+cm.Include( "cl_data.lua" )
 cm.Include( "config/sh_config.lua" )
 
 cm.Include( "cl_callbacks.lua" )
 
 cm.Include( "cl_skin.lua" )
+
 cm.Include( "cl_elements.lua" )
 
 cm.Include( "cl_hooks.lua" )

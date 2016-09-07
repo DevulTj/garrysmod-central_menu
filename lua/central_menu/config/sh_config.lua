@@ -7,20 +7,19 @@ cm.config.COMMUNITY_RULES_URL = "https://google.co.uk"
 cm.config.BACKGROUND_MATERIAL_DISABLED = false
 cm.config.BACKGROUND_MATERIAL = Material( "cm/gmod_background.jpg" )
 
-cm.config.MAIN_COLOR = Color( 26, 28, 89 )
-cm.config.GRADIENT_COLOR = Color( 25, 25, 25 )
-cm.config.BACKGROUND_COLOR_INCREMENTS = 0.008
+cm.addConfig( "main_color", Color( 26, 28, 89 ), "The theme's main colour", nil, { category = "appearance" } )
+cm.addConfig( "gradient_color", Color( 25, 25, 25 ), "The theme's gradient main colour", nil, { category = "appearance" } )
+cm.addConfig( "fade_time", 0.5, "Fade time for animations within the theme", nil, { category = "appearance" } )
+cm.addConfig( "element_pressed_fade_time", 0.5, "Fade time for when you press an element button", nil, { category = "appearance" } )
 
-cm.config.FADE_TIME = 0.5
+cm.addConfig( "font", "Roboto", "The theme's font", function( _, newFont )
+		hook.Run( "LoadFonts", newFont )
+end, { category = "appearance" } )
 
-cm.config.STYLE = {
-    FONT_FACE = "Roboto",
-
-    BUTTON_COLOR = Color( 255, 255, 255 ),
-    BUTTON_DISABLED_COLOR = Color( 125, 125, 125 ),
-    BUTTON_HOVER_COLOR = Color( 235, 235, 235 ),
-    BUTTON_DOWN_COLOR = Color( 215, 215, 215 ),
-}
+cm.addConfig( "button_color", Color( 255, 255, 255 ), "Button colour within the theme", nil, { category = "button appearance" } )
+cm.addConfig( "button_disabled_color", Color( 125, 125, 125 ), "Disabled button colour within the theme", nil, { category = "button appearance" } )
+cm.addConfig( "button_hover_color", Color( 235, 235, 235 ), "Hovered button colour within the theme", nil, { category = "button appearance" } )
+cm.addConfig( "button_down_color", Color( 215, 215, 215 ), "Pressed down button colour within the theme", nil, { category = "button appearance" } )
 
 cm.registerElement( "HOME", {
     showGreeting = true

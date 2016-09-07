@@ -31,7 +31,7 @@ function FRAME:Paint()
 end
 
 local fade = function( self )
-    self:AlphaTo( 0, cm.config.FADE_TIME, 0, function() self.isFadingOut = false self:Close() end )
+    self:AlphaTo( 0, cm.getData( "fade_time", 0.5 ), 0, function() self.isFadingOut = false self:Close() end )
 end
 
 function FRAME:fadeOut()
@@ -40,22 +40,27 @@ function FRAME:fadeOut()
     local x, y = self.background:GetPos()
     if x == 0 and y == 0 then fade( self ) return end
 
-    self.background:MoveTo( 0, 0, 0.3, 0, -1, function()
+    self.background:MoveTo( 0, 0, cm.getData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
         fade( self )
     end )
 end
 
 
 function FRAME:setUp()
+    local buttonDisabledColor = cm.getData( "button_disabled_color", Color( 125, 125, 125 ) )
+    local buttonDownColor = cm.getData( "button_down_color", Color( 235, 235, 235 ) )
+    local buttonHoverColor = cm.getData( "button_hover_color", Color( 215, 215, 215 ) )
+    local buttonColor = cm.getData( "button_color", Color( 255, 255, 255 ) )
+
     self.background = self:Add( "DPanel" )
     self.background:SetSize( self:GetWide() * 3, self:GetTall() )
 
-    self.background.amount = cm.config.BACKGROUND_COLOR_INCREMENTS
-    local color = cm.config.MAIN_COLOR or color_white
+    local color = cm.getData( "main_color", color_white )
+    local gradientCol = cm.getData( "gradient_color", color_black )
 
     self.background.Paint = function( pnl, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, color )
-        draw.RoundedBox( 0, ScrW(), 0, w - ScrW(), h, cm.config.GRADIENT_COLOR )
+        draw.RoundedBox( 0, ScrW(), 0, w - ScrW(), h, gradientCol )
 
         if not cm.config.BACKGROUND_MATERIAL_DISABLED then
     		surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
@@ -63,7 +68,7 @@ function FRAME:setUp()
     		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
         end
 
-        surface.SetDrawColor( cm.config.GRADIENT_COLOR )
+        surface.SetDrawColor( gradientCol )
         surface.SetMaterial( gradientr )
         surface.DrawTexturedRect( ScrW() * 0.75, 0, ScrW() * 0.25, h )
     end
@@ -126,24 +131,29 @@ function FRAME:setUp()
         button:SetDisabled( customCheck == false )
 
         button.UpdateColours = function( pnl, skin )
-        	if pnl:GetDisabled() then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DISABLED_COLOR ) end
-        	if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DOWN_COLOR ) end
-        	if pnl.Hovered then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_HOVER_COLOR ) end
+                    print( buttonDisabledColor )
+                    print( buttonDownColor )
+                    print( buttonHoverColor )
+                    print( buttonColor )
+        	if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
+        	if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
+        	if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
-        	return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_COLOR )
+        	return pnl:SetTextStyleColor( buttonColor )
         end
 
         local increaseAmount = ScrW() / 6
         button.DoClick = function( pnl )
-            self.panel:AlphaTo( 0, 0.5, 0 )
-            self.background:MoveTo( - ( increaseAmount * ( Id - 1 ) ), nil, 0.5, 0, -1, function()
+            local fadeTime = cm.getData( "element_pressed_fade_time", 0.5 )
+            self.panel:AlphaTo( 0, fadeTime, 0 )
+            self.background:MoveTo( - ( increaseAmount * ( Id - 1 ) ), nil, fadeTime, 0, -1, function()
                 self.panel:Clear()
-                self.panel:AlphaTo( 255, 0.5, 0 )
+                self.panel:AlphaTo( 255, fadeTime, 0 )
 
                 cm.getCallback( data, self )
             end )
 
-            self.buttonUnderWidget:MoveTo( 68 + ( buttonW * Id ), 24 + 20 + pnl:GetTall(), 0.5, 0, -1 )
+            self.buttonUnderWidget:MoveTo( 68 + ( buttonW * Id ), 24 + 20 + pnl:GetTall(), fadeTime, 0, -1 )
         end
 
         if Id == 1 then self.buttonUnderWidget:SetPos( 68 + ( buttonW * Id ), 24 + 22 + button:GetTall() ) end
@@ -156,8 +166,6 @@ function FRAME:setUp()
 
     self.closeBtn.spam = CurTime()
     self.closeBtn.Paint = function( pnl, w, h )
-        if pnl:GetDisabled() then return pnl:SetColor( cm.config.STYLE.BUTTON_DISABLED_COLOR ) end
-        if pnl.Depressed or pnl.m_bSelected	then return pnl:SetColor( cm.config.STYLE.BUTTON_DOWN_COLOR ) end
         if pnl.Hovered then
             if not pnl.fading and self.closeBtn.spam < CurTime() then
                 self.closeLabel.fading = true
@@ -165,8 +173,6 @@ function FRAME:setUp()
 
                 self.closeLabel:MoveTo( -10, ScrH() * 0.8, 0.3, 0, -1, function() self.closeLabel.fading = false self.closeLabel.isInView = true end )
             end
-
-            pnl:SetColor( cm.config.STYLE.BUTTON_HOVER_COLOR )
 
             return
         end
@@ -178,7 +184,7 @@ function FRAME:setUp()
             self.closeLabel:MoveTo( -120, ScrH() * 0.8, 0.3, 0, -1, function() self.closeLabel.fading = false self.closeLabel.isInView = false end )
         end
 
-        return pnl:SetColor( cm.config.STYLE.BUTTON_COLOR )
+        return
     end
 
     self.closeBtn.DoClick = function( pnl )
@@ -194,11 +200,11 @@ function FRAME:setUp()
     self.closeLabel.Paint = function() end
 
     self.closeLabel.UpdateColours = function( pnl, skin )
-    	if pnl:GetDisabled() then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DISABLED_COLOR ) end
-    	if pnl.Depressed or pnl.m_bSelected	then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DOWN_COLOR ) end
-        if pnl.Hovered then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_HOVER_COLOR ) end
+        if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
+        if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
+        if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
-    	return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_COLOR )
+        return pnl:SetTextStyleColor( buttonColor )
     end
 
     self.settingsLabel = self:Add( "DButton" )
@@ -210,11 +216,11 @@ function FRAME:setUp()
     self.settingsLabel.Paint = function() end
 
     self.settingsLabel.UpdateColours = function( pnl, skin )
-    	if pnl:GetDisabled() then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DISABLED_COLOR ) end
-    	if pnl.Depressed or pnl.m_bSelected	then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_DOWN_COLOR ) end
-    	if pnl.Hovered then return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_HOVER_COLOR ) end
+        if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
+        if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
+        if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
-    	return pnl:SetTextStyleColor( cm.config.STYLE.BUTTON_COLOR )
+        return pnl:SetTextStyleColor( buttonColor )
     end
 
     self.settingsBtn = self:Add( "DImageButton" )
@@ -224,8 +230,6 @@ function FRAME:setUp()
 
     self.settingsBtn.spam = CurTime()
     self.settingsBtn.Paint = function( pnl, w, h )
-        if pnl:GetDisabled() then pnl:SetColor( cm.config.STYLE.BUTTON_DISABLED_COLOR ) return end
-        if pnl.Depressed or pnl.m_bSelected	then pnl:SetColor( cm.config.STYLE.BUTTON_DOWN_COLOR ) return end
         if pnl.Hovered then
             if not pnl.fading and self.settingsBtn.spam < CurTime() then
                 self.settingsLabel.fading = true
@@ -233,8 +237,6 @@ function FRAME:setUp()
 
                 self.settingsLabel:MoveTo( -10, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = true end )
             end
-
-            pnl:SetColor( cm.config.STYLE.BUTTON_HOVER_COLOR )
 
             return
         end
@@ -246,7 +248,7 @@ function FRAME:setUp()
             self.settingsLabel:MoveTo( -120, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = false end )
         end
 
-        return pnl:SetColor( cm.config.STYLE.BUTTON_COLOR )
+        return
     end
 
     self.closeBtn.DoClick = function( pnl )
@@ -280,7 +282,7 @@ function FRAME:setUp()
     if firstElement then cm.getCallback( firstElement, self ) end
 
     self.panel:SetAlpha( 0 )
-    self.panel:AlphaTo( 255, 0.5, 0 )
+    self.panel:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
 end
 
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
@@ -290,7 +292,7 @@ cm.create = function()
     cm.frame:setUp()
 
     cm.frame:SetAlpha( 0 )
-    cm.frame:AlphaTo( 255, 0.5, 0 )
+    cm.frame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
 
     cm.frame.nextClose = CurTime() + 1
 end
@@ -414,7 +416,7 @@ cm.createDialogue = function( title, text, option1, callback1, option2, callback
     cm.dialogueFrame:setUp()
 
     cm.dialogueFrame:SetAlpha( 0 )
-    cm.dialogueFrame:AlphaTo( 255, 0.5, 0 )
+    cm.dialogueFrame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
 end
 
 FRAME = {}
@@ -449,7 +451,7 @@ function FRAME:Paint( w, h )
 end
 
 function FRAME:setUp()
-    self.container = self:Add( "EditablePanel" )
+    self.container = self:Add( "Panel" )
     self.container:SetSize( ScrH() * 0.75, ScrH() * 0.75 )
     self.container:Center()
 
@@ -480,6 +482,73 @@ function FRAME:setUp()
     self.closeBtn.DoClick = function( pnl )
         self:Close()
     end
+
+    self.scroll = self.container:Add( "DScrollPanel" )
+    self.scroll:SetPos( 0, 34 )
+    self.scroll:SetSize( ScrH() * 0.75, ScrH() * 0.75 - 72 )
+    self.scroll:InvalidateParent( true )
+
+    self.properties = self.scroll:Add( "DProperties" )
+    self.properties:SetSize( self.scroll:GetSize() )
+
+    local varsSaved = {}
+    for k, v in pairs( cm.data.stored ) do
+        local index = v.data and v.data.category or "misc"
+
+        varsSaved[ index ] = varsSaved[ index ] or {}
+        varsSaved[ index ][ k ] = v
+    end
+
+    for category, settings in SortedPairs( varsSaved ) do
+        for k, v in SortedPairs( settings ) do
+            local form = v.data and v.data.form
+            local value = cm.getData( k, cm.data.stored[ k ].default )
+
+            if not form then
+                local _type = type( value )
+
+				if _type == "number" then
+					form = "Int"
+					value = tonumber( value )
+				elseif _type == "boolean" then
+					form = "Boolean"
+					value = util.tobool( value )
+				else
+					form = "Generic"
+				end
+            end
+
+			if form == "Generic" and type( value ) == "table" and value.r and value.g and value.b then
+				value = Vector( value.r / 255, value.g / 255, value.b / 255 )
+				form = "VectorColor"
+			end
+
+			local row = self.properties:CreateRow( category, k )
+			row:Setup( form, v.data and v.data.data or {} )
+			row:SetValue( value )
+			row:SetToolTip( v.description )
+
+            local beforeVal = value
+			row.DataChanged = function( this, value )
+                if form == "VectorColor" then
+					local vector = Vector( value )
+
+					value = Color( math.floor( vector.x * 255 ), math.floor( vector.y * 255 ), math.floor( vector.z * 255 ) )
+				elseif form == "Int" or form == "Float" then
+					value = tonumber( value )
+
+					if form == "Int" then
+						value = math.Round( value )
+					end
+				elseif form == "Boolean" then
+					value = util.tobool( value )
+				end
+                cm.setData( k, value )
+
+                if v.callback then v.callback( beforeVal, value ) end
+            end
+        end
+    end
 end
 
 derma.DefineControl( "centralMenuSettingsFrame", nil, FRAME, "DFrame" )
@@ -489,7 +558,7 @@ cm.createSettingsFrame = function()
     cm.settingsFrame:setUp()
 
     cm.settingsFrame:SetAlpha( 0 )
-    cm.settingsFrame:AlphaTo( 255, 0.5, 0 )
+    cm.settingsFrame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
 end
 
 BUTTON = {}
