@@ -29,6 +29,8 @@ cm.addConfig( "button_text_color_inverted", Color( 0, 0, 0 ), "Inverted text col
 
 cm.addConfig( "button_bg_color", Color( 255, 255, 255 ), "Button background color within the theme", nil, { category = "button appearance" } )
 
+cm.config.ELEMENT_TITLE_FORCE_UPPERCASE = true 
+
 cm.registerElement( "HOME", {
     showGreeting = true
 })
