@@ -3,6 +3,8 @@ cm.data = cm.data or {}
 cm.data.playerData = cm.data.playerData or {}
 cm.data.stored = cm.data.stored or {}
 
+cm.data.unEditableConfig = cm.data.unEditableConfig or {}
+
 cm.data.folderName = "cm"
 cm.data.fileName = "configuration.txt"
 
@@ -14,7 +16,7 @@ local function getAllData()
     return util.JSONToTable( file.Read( cm.data.folderName .. "/" .. cm.data.fileName, "DATA" ) or "[]" ) or {}
 end
 
-function cm.addConfig( var, val, description, callback, data )
+function cm.addClientConfig( var, val, description, callback, data )
     local oldCfg = cm.data.stored[ var ]
 
     cm.data.stored[ var ] = {
@@ -26,11 +28,19 @@ function cm.addConfig( var, val, description, callback, data )
     }
 end
 
-function cm.getData( var, fallbackVal )
+function cm.addUnEditableConfig( var, val )
+    cm.data.unEditableConfig[ var ] = val
+end
+
+function cm.getUnEditableData( var, fallbackVal )
+    return cm.data.unEditableConfig[ var ] or fallbackVal
+end
+
+function cm.getClientData( var, fallbackVal )
     return cm.data.playerData[ var ] or fallbackVal
 end
 
-function cm.setData( var, val )
+function cm.setClientData( var, val )
     cm.data.playerData[ var ] = val
 
     saveData()

@@ -9,20 +9,18 @@
 cm.config = cm.config or {}
 cm.config.ELEMENTS = {}
 
+cm.Include( "cl_data.lua" )
+
 cm.registerElement = function( name, data )
     data = data or {}
-    data.name = cm.config.ELEMENT_TITLE_FORCE_UPPERCASE and string.upper( name ) or name
+    data.name = name
 
     return table.insert( cm.config.ELEMENTS, data )
 end
 
-cm.Include( "cl_data.lua" )
 cm.Include( "config/sh_config.lua" )
 
 cm.Include( "cl_callbacks.lua" )
-
 cm.Include( "cl_skin.lua" )
-
 cm.Include( "cl_elements.lua" )
-
 cm.Include( "cl_hooks.lua" )

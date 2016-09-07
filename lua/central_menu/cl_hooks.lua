@@ -5,7 +5,7 @@ local FKeyToHook = {
     ["F4"] = "ShowSpare2"
 }
 
-hook.Add( FKeyToHook[ cm.config.MENU_KEY ] or "", "cm", function()
+hook.Add( FKeyToHook[ cm.getUnEditableData( "menu_key", "F1" ) ] or "", "cm", function()
     if not cm.frame or not cm.frame:IsVisible() or not cm.frame.background.reverseFade then
 		cm.create()
 	else

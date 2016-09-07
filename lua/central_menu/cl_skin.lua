@@ -1,5 +1,5 @@
 hook.Add( "LoadFonts" , "fonts", function()
-	local fontFace = cm.getData( "font", "Roboto" )
+	local fontFace = cm.getClientData( "font", "Roboto" )
 	surface.CreateFont( "cmLarge", {
 		font = fontFace,
 		size = 32,

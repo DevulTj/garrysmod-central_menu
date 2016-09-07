@@ -23,7 +23,7 @@ local FKeyToKeyEnum = {
 function FRAME:Paint()
     if self.nextClose and self.nextClose > CurTime() then return end
 
-    if input.IsKeyDown( FKeyToKeyEnum[ cm.config.MENU_KEY ] or "" ) or input.IsKeyDown( KEY_ESCAPE ) then
+    if input.IsKeyDown( FKeyToKeyEnum[ cm.getUnEditableData( "menu_key", "F1" ) ] or "" ) or input.IsKeyDown( KEY_ESCAPE ) then
     	if not self.isFadingOut then
     		self:fadeOut()
     	end
@@ -31,7 +31,7 @@ function FRAME:Paint()
 end
 
 local fade = function( self )
-    self:AlphaTo( 0, cm.getData( "fade_time", 0.5 ), 0, function() self.isFadingOut = false self:Close() end )
+    self:AlphaTo( 0, cm.getClientData( "fade_time", 0.5 ), 0, function() self.isFadingOut = false self:Close() end )
 end
 
 function FRAME:fadeOut()
@@ -40,31 +40,32 @@ function FRAME:fadeOut()
     local x, y = self.background:GetPos()
     if x == 0 and y == 0 then fade( self ) return end
 
-    self.background:MoveTo( 0, 0, cm.getData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
+    self.background:MoveTo( 0, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
         fade( self )
     end )
 end
 
 
 function FRAME:setUp()
-    local buttonDisabledColor = cm.getData( "element_button_disabled_color", Color( 125, 125, 125 ) )
-    local buttonDownColor = cm.getData( "element_button_down_color", Color( 235, 235, 235 ) )
-    local buttonHoverColor = cm.getData( "element_button_hover_color", Color( 215, 215, 215 ) )
-    local buttonColor = cm.getData( "element_button_color", Color( 255, 255, 255 ) )
+    local buttonDisabledColor = cm.getClientData( "element_button_disabled_color", Color( 125, 125, 125 ) )
+    local buttonDownColor = cm.getClientData( "element_button_down_color", Color( 235, 235, 235 ) )
+    local buttonHoverColor = cm.getClientData( "element_button_hover_color", Color( 215, 215, 215 ) )
+    local buttonColor = cm.getClientData( "element_button_color", Color( 255, 255, 255 ) )
 
     self.background = self:Add( "DPanel" )
     self.background:SetSize( self:GetWide() * 3, self:GetTall() )
 
-    local color = cm.getData( "main_color", color_white )
-    local gradientCol = cm.getData( "gradient_color", color_black )
+    local color = cm.getClientData( "main_color", color_white )
+    local gradientCol = cm.getClientData( "gradient_color", color_black )
 
+    local bgMat = Material( cm.getUnEditableData( "background_material", "cm/gmod_background.jpg" ) )
     self.background.Paint = function( pnl, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, color )
         draw.RoundedBox( 0, ScrW(), 0, w - ScrW(), h, gradientCol )
 
-        if not cm.config.BACKGROUND_MATERIAL_DISABLED then
+        if not cm.getUnEditableData( "background_material_disabled", false ) then
     		surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
-    		surface.SetMaterial( cm.config.BACKGROUND_MATERIAL )
+    		surface.SetMaterial( bgMat )
     		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
         end
 
@@ -79,7 +80,7 @@ function FRAME:setUp()
     self.leftLayout:SetWide( 160 )
     self.leftLayout:SetSpaceX( 4 )
 
-    local elementsCol = cm.getData( "theme_elements_color", Color( 255, 255, 255 ) )
+    local elementsCol = cm.getClientData( "theme_elements_color", Color( 255, 255, 255 ) )
 
     self.leftLayout.Paint = function( pnl, w, h )
 
@@ -111,7 +112,7 @@ function FRAME:setUp()
     self.buttonUnderWidget = self:Add( "DPanel" )
     self.buttonUnderWidget:SetSize( buttonW, 1 )
     self.buttonUnderWidget.Paint = function( pnl, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, cm.getData( "theme_elements_widget_color", color_white ) )
+        draw.RoundedBox( 0, 0, 0, w, h, cm.getClientData( "theme_elements_widget_color", color_white ) )
     end
 
     self.elements = {}
@@ -119,7 +120,7 @@ function FRAME:setUp()
         self.elements[ Id ] = self.buttonLayout:Add( "DButton" )
         local button = self.elements[ Id ]
 
-        button:SetText( data.name )
+        button:SetText( cm.getUnEditableData( "element_title_force_uppercase", false ) and string.upper( data.name ) or data.name )
         button:Dock( LEFT )
         button:SetWide( buttonW )
         button:SetFont( "cmLarge" )
@@ -145,7 +146,7 @@ function FRAME:setUp()
 
         local increaseAmount = ScrW() / 6
         button.DoClick = function( pnl )
-            local fadeTime = cm.getData( "element_pressed_fade_time", 0.5 )
+            local fadeTime = cm.getClientData( "element_pressed_fade_time", 0.5 )
             self.panel:AlphaTo( 0, fadeTime, 0 )
             self.background:MoveTo( - ( increaseAmount * ( Id - 1 ) ), nil, fadeTime, 0, -1, function()
                 self.panel:Clear()
@@ -285,7 +286,7 @@ function FRAME:setUp()
     if firstElement then cm.getCallback( firstElement, self ) end
 
     self.panel:SetAlpha( 0 )
-    self.panel:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
+    self.panel:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
 end
 
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
@@ -295,7 +296,7 @@ cm.create = function()
     cm.frame:setUp()
 
     cm.frame:SetAlpha( 0 )
-    cm.frame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
+    cm.frame:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
 
     cm.frame.nextClose = CurTime() + 1
 end
@@ -313,7 +314,7 @@ function BUTTON:Init()
 end
 
 function BUTTON:Paint( w, h )
-    local buttonColor = cm.getData( "button_bg_color", Color( 255, 255, 255 ) )
+    local buttonColor = cm.getClientData( "button_bg_color", Color( 255, 255, 255 ) )
 
     local isHovered = self:IsHovered()
     local xOverride, yOverride, wOverride, hOverride = self.xOverride or 0, self.yOverride or 0, self.wOverride or w, self.hOverride or h
@@ -322,7 +323,7 @@ function BUTTON:Paint( w, h )
     surface.SetDrawColor( Color( buttonColor.r, buttonColor.g, buttonColor.b, 255 ) )
     surface.DrawOutlinedRect( xOverride, yOverride, wOverride, hOverride )
 
-    self:SetTextColor( isHovered and cm.getData( "button_text_color_inverted", color_black ) or cm.getData( "button_text_color", color_white ) )
+    self:SetTextColor( isHovered and cm.getClientData( "button_text_color_inverted", color_black ) or cm.getClientData( "button_text_color", color_white ) )
 end
 
 function BUTTON:PaintOver()
@@ -420,7 +421,7 @@ cm.createDialogue = function( title, text, option1, callback1, option2, callback
     cm.dialogueFrame:setUp()
 
     cm.dialogueFrame:SetAlpha( 0 )
-    cm.dialogueFrame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
+    cm.dialogueFrame:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
 end
 
 FRAME = {}
@@ -495,7 +496,7 @@ function FRAME:setUp()
     self.resetBtn.DoClick = function( pnl )
         cm.createDialogue( "RESET", "Reset to defaults settings?", "YES", function( dialogue )
             for a, b in pairs( cm.data.stored ) do
-                cm.setData( a, b.default )
+                cm.setClientData( a, b.default )
             end
 
             dialogue:Close()
@@ -524,7 +525,7 @@ function FRAME:setUp()
     for category, settings in SortedPairs( varsSaved ) do
         for k, v in SortedPairs( settings ) do
             local form = v.data and v.data.form
-            local value = cm.getData( k, cm.data.stored[ k ].default )
+            local value = cm.getClientData( k, cm.data.stored[ k ].default )
 
             if not form then
                 local _type = type( value )
@@ -566,7 +567,7 @@ function FRAME:setUp()
 					value = util.tobool( value )
 				end
 
-                cm.setData( k, value )
+                cm.setClientData( k, value )
                 if v.callback then v.callback( beforeVal, value ) end
             end
         end
@@ -580,7 +581,7 @@ cm.createSettingsFrame = function()
     cm.settingsFrame:setUp()
 
     cm.settingsFrame:SetAlpha( 0 )
-    cm.settingsFrame:AlphaTo( 255, cm.getData( "fade_time", 0.5 ), 0 )
+    cm.settingsFrame:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
 end
 
 BUTTON = {}
@@ -651,7 +652,7 @@ function BUTTON:setUp()
         pnl.boxY = math.Clamp( hovered and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
         pnl.textCol = math.Clamp( hovered and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
 
-        draw.RoundedBox( 0, 0, pnl.boxY, w, h, cm.getData( "button_bg_color" ) )
+        draw.RoundedBox( 0, 0, pnl.boxY, w, h, cm.getClientData( "button_bg_color" ) )
         draw.RoundedBox( 0, 0, h - 32, w, 1, Color( 150, 150, 150, 255 ) )
 
         draw.SimpleText( self.joinText or "JOIN", "cmMedium", w / 2, h - 4, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
