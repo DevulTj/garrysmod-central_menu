@@ -47,10 +47,10 @@ end
 
 
 function FRAME:setUp()
-    local buttonDisabledColor = cm.getData( "button_disabled_color", Color( 125, 125, 125 ) )
-    local buttonDownColor = cm.getData( "button_down_color", Color( 235, 235, 235 ) )
-    local buttonHoverColor = cm.getData( "button_hover_color", Color( 215, 215, 215 ) )
-    local buttonColor = cm.getData( "button_color", Color( 255, 255, 255 ) )
+    local buttonDisabledColor = cm.getData( "element_button_disabled_color", Color( 125, 125, 125 ) )
+    local buttonDownColor = cm.getData( "element_button_down_color", Color( 235, 235, 235 ) )
+    local buttonHoverColor = cm.getData( "element_button_hover_color", Color( 215, 215, 215 ) )
+    local buttonColor = cm.getData( "element_button_color", Color( 255, 255, 255 ) )
 
     self.background = self:Add( "DPanel" )
     self.background:SetSize( self:GetWide() * 3, self:GetTall() )
@@ -79,9 +79,11 @@ function FRAME:setUp()
     self.leftLayout:SetWide( 160 )
     self.leftLayout:SetSpaceX( 4 )
 
+    local elementsCol = cm.getData( "theme_elements_color", Color( 255, 255, 255 ) )
+
     self.leftLayout.Paint = function( pnl, w, h )
 
-        surface.SetDrawColor( Color( 255, 255, 255, 75 ) )
+        surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( w - 1, 0, 1, h )
     end
@@ -94,7 +96,7 @@ function FRAME:setUp()
     self.buttonLayout:SetSpaceX( 4 )
 
     self.buttonLayout.Paint = function( pnl, w, h )
-        surface.SetDrawColor( Color( 255, 255, 255, 75 ) )
+        surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( 0, h - 1, w, 1 )
     end
@@ -108,6 +110,9 @@ function FRAME:setUp()
 
     self.buttonUnderWidget = self:Add( "DPanel" )
     self.buttonUnderWidget:SetSize( buttonW, 1 )
+    self.buttonUnderWidget.Paint = function( pnl, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, cm.getData( "theme_elements_widget_color", color_white ) )
+    end
 
     self.elements = {}
     for Id, data in SortedPairs( cm.config.ELEMENTS ) do
@@ -122,7 +127,7 @@ function FRAME:setUp()
         button.alpha = 0
         button.Paint = function( pnl, w, h )
             pnl.alpha = math.Clamp( pnl:IsHovered() and pnl.alpha + 5 or pnl.alpha - 5, 0, 75 )
-            surface.SetDrawColor( Color( 255, 255, 255, pnl.alpha ) )
+            surface.SetDrawColor( Color( buttonHoverColor.r, buttonHoverColor.g, buttonHoverColor.b, pnl.alpha ) )
             surface.SetMaterial( glowMat )
             surface.DrawTexturedRect( 0, 0, w, h * 1.2 )
         end
@@ -131,10 +136,6 @@ function FRAME:setUp()
         button:SetDisabled( customCheck == false )
 
         button.UpdateColours = function( pnl, skin )
-                    print( buttonDisabledColor )
-                    print( buttonDownColor )
-                    print( buttonHoverColor )
-                    print( buttonColor )
         	if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
         	if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
         	if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
@@ -163,6 +164,7 @@ function FRAME:setUp()
     self.closeBtn:SetSize( 32, 32 )
     self.closeBtn:SetPos( 100, ScrH() * 0.8 )
     self.closeBtn:SetImage( "cm/power.png" )
+    self.closeBtn:SetColor( buttonColor )
 
     self.closeBtn.spam = CurTime()
     self.closeBtn.Paint = function( pnl, w, h )
@@ -227,6 +229,7 @@ function FRAME:setUp()
     self.settingsBtn:SetSize( 32, 32 )
     self.settingsBtn:SetPos( 100, ScrH() * 0.9 )
     self.settingsBtn:SetImage( "cm/cog.png" )
+    self.settingsBtn:SetColor( buttonColor )
 
     self.settingsBtn.spam = CurTime()
     self.settingsBtn.Paint = function( pnl, w, h )
@@ -310,14 +313,16 @@ function BUTTON:Init()
 end
 
 function BUTTON:Paint( w, h )
+    local buttonColor = cm.getData( "button_bg_color", Color( 255, 255, 255 ) )
+
     local isHovered = self:IsHovered()
     local xOverride, yOverride, wOverride, hOverride = self.xOverride or 0, self.yOverride or 0, self.wOverride or w, self.hOverride or h
-    draw.RoundedBox( 0, xOverride, yOverride, wOverride, hOverride, Color( 255, 255, 255, isHovered and 255 or 0 ) )
+    draw.RoundedBox( 0, xOverride, yOverride, wOverride, hOverride, Color( buttonColor.r, buttonColor.g, buttonColor.b, isHovered and 255 or 0 ) )
 
-    surface.SetDrawColor( color_white )
+    surface.SetDrawColor( Color( buttonColor.r, buttonColor.g, buttonColor.b, 255 ) )
     surface.DrawOutlinedRect( xOverride, yOverride, wOverride, hOverride )
 
-    self:SetTextColor( isHovered and color_black or color_white )
+    self:SetTextColor( isHovered and cm.getData( "button_text_color_inverted", color_black ) or cm.getData( "button_text_color", color_white ) )
 end
 
 function BUTTON:PaintOver()
@@ -362,7 +367,7 @@ end
 
 function FRAME:setUp()
     self.container = self:Add( "EditablePanel" )
-    self.container:SetSize( ScrH() * 0.25, ScrH() * 0.25 )
+    self.container:SetSize( ScrH() * 0.3, ScrH() * 0.3 )
     self.container:Center()
 
     self.title = self.container:Add( "DLabel" )
@@ -483,9 +488,27 @@ function FRAME:setUp()
         self:Close()
     end
 
+    self.resetBtn = self.container:Add( "centralMenuDialogueButton" )
+    self.resetBtn:Dock( BOTTOM )
+    self.resetBtn:DockMargin( 0, 4, 0, 4 )
+    self.resetBtn:SetText( "RESET TO DEFAULTS" )
+    self.resetBtn:SetHeight( 40 )
+    self.resetBtn.DoClick = function( pnl )
+        cm.createDialogue( "RESET", "Reset to defaults settings?", "YES", function( dialogue )
+            for a, b in pairs( cm.data.stored ) do
+                cm.setData( a, b.default )
+            end
+
+            dialogue:Close()
+
+            self:Close()
+            cm.createSettingsFrame()
+        end, "NO", function( dialogue ) dialogue:Close() end )
+    end
+
     self.scroll = self.container:Add( "DScrollPanel" )
     self.scroll:SetPos( 0, 34 )
-    self.scroll:SetSize( ScrH() * 0.75, ScrH() * 0.75 - 72 )
+    self.scroll:SetSize( ScrH() * 0.75, ScrH() * 0.75 - 112 )
     self.scroll:InvalidateParent( true )
 
     self.properties = self.scroll:Add( "DProperties" )
