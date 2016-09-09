@@ -16,7 +16,7 @@ local function getAllData()
     return util.JSONToTable( file.Read( cm.data.folderName .. "/" .. cm.data.fileName, "DATA" ) or "[]" ) or {}
 end
 
-function cm.addClientConfig( var, val, description, callback, data )
+function cm.registerClientConfig( var, val, description, callback, data )
     local oldCfg = cm.data.stored[ var ]
 
     cm.data.stored[ var ] = {
@@ -28,7 +28,7 @@ function cm.addClientConfig( var, val, description, callback, data )
     }
 end
 
-function cm.addUnEditableConfig( var, val )
+function cm.registerUneditableConfig( var, val )
     cm.data.unEditableConfig[ var ] = val
 end
 
