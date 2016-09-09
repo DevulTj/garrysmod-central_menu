@@ -3,6 +3,8 @@ cm.addUnEditableConfig( "background_material_disabled", false )
 cm.addUnEditableConfig( "background_material", "cm/gmod_background.jpg" )
 cm.addUnEditableConfig( "element_title_force_uppercase", true )
 
+cm.addUnEditableConfig( "can_edit_clientside_settings", true )
+
 cm.addClientConfig( "theme_elements_color", Color( 255, 255, 255 ), "The theme's element's colour", nil, { category = "appearance" } )
 cm.addClientConfig( "theme_elements_widget_color", Color( 255, 255, 255 ), "The theme's element's theme widget colour", nil, { category = "appearance" } )
 
@@ -23,6 +25,8 @@ cm.addClientConfig( "element_button_down_color", Color( 215, 215, 215 ), "Presse
 cm.addClientConfig( "button_text_color", Color( 255, 255, 255 ), "Text colour within the theme", nil, { category = "button appearance" } )
 cm.addClientConfig( "button_text_color_inverted", Color( 0, 0, 0 ), "Inverted text color within the theme", nil, { category = "button appearance" } )
 cm.addClientConfig( "button_bg_color", Color( 255, 255, 255 ), "Button background color within the theme", nil, { category = "button appearance" } )
+
+cm.addClientConfig( "ask_on_close", true, "Whether to ask to close the frame when you press the close button", nil, { category = "general configuration" } )
 
 cm.registerElement( "HOME", {
     showGreeting = true

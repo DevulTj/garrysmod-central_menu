@@ -210,57 +210,65 @@ function FRAME:setUp()
         return pnl:SetTextStyleColor( buttonColor )
     end
 
-    self.settingsLabel = self:Add( "DButton" )
-    self.settingsLabel:SetText( "SETTINGS" )
-    self.settingsLabel:SetPos( -120 , ScrH() * 0.9 )
-    self.settingsLabel:SetSize( nil, 32 )
-    self.settingsLabel:SetWide( buttonW )
-    self.settingsLabel:SetFont( "cmMedium" )
-    self.settingsLabel.Paint = function() end
+    if cm.getUnEditableData( "can_edit_clientside_settings", true ) then
+        self.settingsLabel = self:Add( "DButton" )
+        self.settingsLabel:SetText( "SETTINGS" )
+        self.settingsLabel:SetPos( -120 , ScrH() * 0.9 )
+        self.settingsLabel:SetSize( nil, 32 )
+        self.settingsLabel:SetWide( buttonW )
+        self.settingsLabel:SetFont( "cmMedium" )
+        self.settingsLabel.Paint = function() end
 
-    self.settingsLabel.UpdateColours = function( pnl, skin )
-        if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
-        if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
-        if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
+        self.settingsLabel.UpdateColours = function( pnl, skin )
+            if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
+            if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
+            if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
-        return pnl:SetTextStyleColor( buttonColor )
-    end
+            return pnl:SetTextStyleColor( buttonColor )
+        end
 
-    self.settingsBtn = self:Add( "DImageButton" )
-    self.settingsBtn:SetSize( 32, 32 )
-    self.settingsBtn:SetPos( 100, ScrH() * 0.9 )
-    self.settingsBtn:SetImage( "cm/cog.png" )
-    self.settingsBtn:SetColor( buttonColor )
+        self.settingsBtn = self:Add( "DImageButton" )
+        self.settingsBtn:SetSize( 32, 32 )
+        self.settingsBtn:SetPos( 100, ScrH() * 0.9 )
+        self.settingsBtn:SetImage( "cm/cog.png" )
+        self.settingsBtn:SetColor( buttonColor )
 
-    self.settingsBtn.spam = CurTime()
-    self.settingsBtn.Paint = function( pnl, w, h )
-        if pnl.Hovered then
-            if not pnl.fading and self.settingsBtn.spam < CurTime() then
+        self.settingsBtn.spam = CurTime()
+        self.settingsBtn.Paint = function( pnl, w, h )
+            if pnl.Hovered then
+                if not pnl.fading and self.settingsBtn.spam < CurTime() then
+                    self.settingsLabel.fading = true
+                    self.settingsBtn.spam = CurTime() + 0.3
+
+                    self.settingsLabel:MoveTo( -10, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = true end )
+                end
+
+                return
+            end
+
+            if not pnl.fading and self.settingsLabel.isInView and self.settingsBtn.spam < CurTime() then
                 self.settingsLabel.fading = true
                 self.settingsBtn.spam = CurTime() + 0.3
 
-                self.settingsLabel:MoveTo( -10, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = true end )
+                self.settingsLabel:MoveTo( -120, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = false end )
             end
 
             return
         end
 
-        if not pnl.fading and self.settingsLabel.isInView and self.settingsBtn.spam < CurTime() then
-            self.settingsLabel.fading = true
-            self.settingsBtn.spam = CurTime() + 0.3
-
-            self.settingsLabel:MoveTo( -120, ScrH() * 0.9, 0.3, 0, -1, function() self.settingsLabel.fading = false self.settingsLabel.isInView = false end )
+        self.settingsBtn.DoClick = function( pnl )
+            cm.createSettingsFrame()
         end
-
-        return
     end
 
     self.closeBtn.DoClick = function( pnl )
-        cm.createDialogue( "CLOSE", "Do you want to close?", "Yes", function( dialogue ) dialogue:Close() self:fadeOut() end, "No", function( dialogue ) dialogue:Close() end )
-    end
+        local doDialogue = cm.getClientData( "ask_on_close" )
 
-    self.settingsBtn.DoClick = function( pnl )
-        cm.createSettingsFrame()
+        if doDialogue then
+            cm.createDialogue( "CLOSE", "Do you want to close?", "Yes", function( dialogue ) dialogue:Close() self:fadeOut() end, "No", function( dialogue ) dialogue:Close() end )
+        else
+            self:fadeOut()
+        end
     end
 
     self.avatar = self:Add( "AvatarImage" )
