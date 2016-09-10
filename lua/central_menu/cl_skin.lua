@@ -37,7 +37,7 @@ hook.Add( "loadFonts" , "fonts", function()
 	} )
 end)
 
-hook.Run( "LoadFonts" )
+hook.Run( "loadFonts" )
 
 local blur = Material( "pp/blurscreen" )
 function cm.drawBlurAt( x, y, w, h, amount, passes )
