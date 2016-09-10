@@ -29,3 +29,7 @@ function cm.Include( dir )
 end
 
 cm.Include(  "cl_include.lua" )
+
+if SERVER then
+	resource.AddWorkshop( "761352831" )
+end

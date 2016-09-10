@@ -1,8 +1,16 @@
-cm.registerUneditableConfig( "menu_key", "F1" )
-cm.registerUneditableConfig( "background_material_disabled", false )
-cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" )
-cm.registerUneditableConfig( "element_title_force_uppercase", true )
-cm.registerUneditableConfig( "can_edit_clientside_settings", true )
+--[[
+  Central UI Menu
+  Created by http://steamcommunity.com/id/Devul/ and http://steamcommunity.com/id/fruitwasp/
+  Do not redistribute this software without permission from authors
+
+  Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
+]]--
+
+cm.registerUneditableConfig( "menu_key", "F1" ) -- Available hotkeys (F1, F2, F3, F4)
+cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables material background image and uses main_color client configuration
+cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" ) -- Material background path, make sure you FastDL/Workshop it
+cm.registerUneditableConfig( "element_title_force_uppercase", true ) -- Forces element button titles to be in UPPERCASE or not
+cm.registerUneditableConfig( "can_edit_clientside_settings", true ) -- Enforces the ability to set clientside customization
 
 cm.registerClientConfig( "theme_elements_color", Color( 255, 255, 255 ), "The theme's element's colour", nil, { category = "appearance" } )
 cm.registerClientConfig( "theme_elements_widget_color", Color( 255, 255, 255 ), "The theme's element's theme widget colour", nil, { category = "appearance" } )
@@ -12,7 +20,7 @@ cm.registerClientConfig( "fade_time", 0.5, "Fade time for animations within the 
 cm.registerClientConfig( "element_pressed_fade_time", 0.5, "Fade time for when you press an element button", nil, { category = "appearance" } )
 
 cm.registerClientConfig( "font", "Roboto", "The theme's font", function( _, newFont )
-		hook.Run( "LoadFonts", newFont )
+		hook.Run( "loadFonts", newFont )
 end, { category = "appearance" } )
 
 cm.registerClientConfig( "element_button_color", Color( 255, 255, 255 ), "Button colour within the theme", nil, { category = "element button appearance" } )
@@ -27,7 +35,8 @@ cm.registerClientConfig( "button_bg_color", Color( 255, 255, 255 ), "Button back
 cm.registerClientConfig( "ask_on_close", true, "Whether to ask to close the frame when you press the close button", nil, { category = "general configuration" } )
 
 cm.registerElement( "HOME", {
-    showGreeting = true
+    showGreeting = true,
+	text = [[Text with multi line support. You can modify this through the server configuration files.]]
 })
 
 cm.registerElement( "FORUMS", {
@@ -35,7 +44,13 @@ cm.registerElement( "FORUMS", {
 })
 
 cm.registerElement( "STAFF", {
-    customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
+    --customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
+
+	staff = {
+		[ "admin" ] = Color( 255, 255, 255 ),
+		[ "superadmin" ] = Color( 51, 125, 255 ),
+		[ "owner" ] = Color( 235, 51, 51 )
+	}
 })
 
 cm.registerElement( "SERVERS", {
