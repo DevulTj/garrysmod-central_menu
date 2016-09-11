@@ -668,7 +668,7 @@ function BUTTON:setUp()
         pnl.boxY = math.Clamp( hovered and ( pnl.boxY - 4 ) or ( pnl.boxY + 3 ), 0, self.bottomPanel:GetTall() )
         pnl.textCol = math.Clamp( hovered and ( pnl.textCol - 10 ) or ( pnl.textCol + 10 ), 0, 255 )
 
-        draw.RoundedBox( 0, 0, pnl.boxY, w, h, cm.getClientData( "button_bg_color" ) )
+        draw.RoundedBox( 0, 0, pnl.boxY, w, h, cm.getClientData( "button_bg_color", color_white ) )
         draw.RoundedBox( 0, 0, h - 32, w, 1, Color( 150, 150, 150, 255 ) )
 
         draw.SimpleText( self.joinText or "JOIN", "cmMedium", w / 2, h - 4, Color( pnl.textCol, pnl.textCol, pnl.textCol, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
