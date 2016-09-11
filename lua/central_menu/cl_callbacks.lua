@@ -25,6 +25,7 @@ cm.addDataCheck( "text", function( data, frame )
     label:SetFont( "cmMedium" )
     label:SetTextColor( color_white )
     label:SetContentAlignment( 7 )
+    label:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 end )
 
 cm.addDataCheck( "callback", function( data, frame )
@@ -67,6 +68,7 @@ cm.addDataCheck( "staff", function( data, frame )
         label:SetText( userGroup )
         label:SetFont( "cmMedium" )
         label:SetTextColor( staffGroups[ userGroup ] )
+        label:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
         for _, client in pairs( clients ) do
             local usergroup = client:GetUserGroup()
@@ -83,6 +85,7 @@ cm.addDataCheck( "staff", function( data, frame )
                 button:SetFont( "cmMedium" )
                 button:SetContentAlignment( 2 )
                 button:SetExpensiveShadow( 1, color_black )
+                button:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
                 button.textCol = 255
                 button.boxY = button:GetTall() / 2
@@ -117,6 +120,7 @@ cm.addDataCheck( "servers", function( data, frame )
     label:Dock( TOP )
     label:DockMargin( 0, 0, 0, 12 )
     label:SizeToContents()
+    label:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
     local layout = frame.panel:Add( "DIconLayout" )
     layout:Dock( FILL )
@@ -150,6 +154,7 @@ cm.addDataCheck( "showGreeting", function( data, frame )
     label:DockMargin( 0, 0, 0, 4 )
     label:SetHeight( 20 )
     label:SizeToContents()
+    label:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
     local spacer = frame.panel:Add( "DPanel" )
     spacer:Dock( TOP )

@@ -89,9 +89,7 @@ function FRAME:setUp()
     self.leftLayout:SetSpaceX( 4 )
 
     local elementsCol = cm.getClientData( "theme_elements_color", Color( 255, 255, 255 ) )
-
     self.leftLayout.Paint = function( pnl, w, h )
-
         surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( w - 1, 0, 1, h )
@@ -132,6 +130,7 @@ function FRAME:setUp()
         button:Dock( LEFT )
         button:SetWide( buttonW )
         button:SetFont( "cmLarge" )
+        button:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
         button.alpha = 0
         button.Paint = function( pnl, w, h )
@@ -279,24 +278,26 @@ function FRAME:setUp()
         end
     end
 
-    self.avatar = self:Add( "AvatarImage" )
-    self.avatar:SetSize( 64, 64 )
-    self.avatar:SetPos( 70, ScrH() * 0.18 )
-    self.avatar:SetPlayer( LocalPlayer(), 64 )
+    if cm.getUnEditableData( "show_avatar", false ) then
+        self.avatar = self:Add( "AvatarImage" )
+        self.avatar:SetSize( 64, 64 )
+        self.avatar:SetPos( 70, ScrH() * 0.18 )
+        self.avatar:SetPlayer( LocalPlayer(), 64 )
 
-    self.avatarClick = self:Add( "DButton" )
-    self.avatarClick:SetTall( self.avatar:GetTall() )
-    self.avatarClick:SetWide( self.avatar:GetWide() + 32 )
-    self.avatarClick:SetText( "" )
-    self.avatarClick:SetPos( select( 1, self.avatar:GetPos() ) - 32, select( 2, self.avatar:GetPos() ) )
+        self.avatarClick = self:Add( "DButton" )
+        self.avatarClick:SetTall( self.avatar:GetTall() )
+        self.avatarClick:SetWide( self.avatar:GetWide() + 32 )
+        self.avatarClick:SetText( "" )
+        self.avatarClick:SetPos( select( 1, self.avatar:GetPos() ) - 32, select( 2, self.avatar:GetPos() ) )
 
-    self.avatarClick.Paint = function( pnl, w, h )
-        surface.SetDrawColor( Color( 237, 154, 30 ) )
-        surface.SetMaterial( gradient )
-        surface.DrawTexturedRect( 0, 0, 1, h )
+        self.avatarClick.Paint = function( pnl, w, h )
+            surface.SetDrawColor( Color( 237, 154, 30 ) )
+            surface.SetMaterial( gradient )
+            surface.DrawTexturedRect( 0, 0, 1, h )
+        end
+
+        self.avatarClick.DoClick = function() end
     end
-
-    self.avatarClick.DoClick = function() end
 
     local firstElement = cm.config.ELEMENTS[ 1 ]
     if firstElement then cm.getCallback( firstElement, self ) end

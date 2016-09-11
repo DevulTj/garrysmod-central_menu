@@ -11,6 +11,7 @@ cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables
 cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" ) -- Material background path, make sure you FastDL/Workshop it
 cm.registerUneditableConfig( "element_title_force_uppercase", true ) -- Forces element button titles to be in UPPERCASE or not
 cm.registerUneditableConfig( "can_edit_clientside_settings", true ) -- Enforces the ability to set clientside customization
+cm.registerUneditableConfig( "show_avatar", true ) -- Show avatar button
 
 cm.registerClientConfig( "theme_elements_color", Color( 255, 255, 255 ), "The theme's element's colour", nil, { category = "appearance" } )
 cm.registerClientConfig( "theme_elements_widget_color", Color( 255, 255, 255 ), "The theme's element's theme widget colour", nil, { category = "appearance" } )
