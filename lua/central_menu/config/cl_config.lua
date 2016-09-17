@@ -1,10 +1,18 @@
 --[[
-  Central UI Menu
-  Created by http://steamcommunity.com/id/Devul/ and http://steamcommunity.com/id/fruitwasp/
-  Do not redistribute this software without permission from authors
+Central UI Menu
+Created by http://steamcommunity.com/id/Devul/ and http://steamcommunity.com/id/fruitwasp/
+Do not redistribute this software without permission from authors
 
-  Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
+Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 ]]--
+
+--[[
+	If you bind the menu_key to F1, make sure you've disabled the default DarkRP f1 help menu:
+
+	1. open `darkrpmodification/lua/darkrp_config/disabled_defaults.lua`
+	2. find the `DarkRP.disabledDefaults["modules"]` table
+	3. disable the f1menu module by setting the config to `true`
+]]
 
 cm.registerUneditableConfig( "menu_key", "F1" ) -- Available hotkeys (F1, F2, F3, F4)
 cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables material background image and uses main_color client configuration
@@ -21,7 +29,7 @@ cm.registerClientConfig( "fade_time", 0.5, "Fade time for animations within the 
 cm.registerClientConfig( "element_pressed_fade_time", 0.5, "Fade time for when you press an element button", nil, { category = "appearance" } )
 
 cm.registerClientConfig( "font", "Roboto", "The theme's font", function( _, newFont )
-		hook.Run( "loadFonts", newFont )
+	hook.Run( "loadFonts", newFont )
 end, { category = "appearance" } )
 
 cm.registerClientConfig( "element_button_color", Color( 255, 255, 255 ), "Button colour within the theme", nil, { category = "element button appearance" } )
@@ -36,16 +44,16 @@ cm.registerClientConfig( "button_bg_color", Color( 255, 255, 255 ), "Button back
 cm.registerClientConfig( "ask_on_close", true, "Whether to ask to close the frame when you press the close button", nil, { category = "general configuration" } )
 
 cm.registerElement( "HOME", {
-    showGreeting = true,
+	showGreeting = true,
 	text = [[Text with multi line support. You can modify this through the server configuration files.]]
 })
 
 cm.registerElement( "FORUMS", {
-    showURL = "https://google.nl"
+	showURL = "https://google.nl"
 })
 
 cm.registerElement( "STAFF", {
-    --customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
+	--customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
 
 	staff = {
 		[ "admin" ] = Color( 255, 255, 255 ),
@@ -55,24 +63,24 @@ cm.registerElement( "STAFF", {
 })
 
 cm.registerElement( "SERVERS", {
-    servers = {
-        [ "DARKRP" ] = {
-            icon = Material( "cm/server_icon.png" ),
-            ip = "127.0.0.1",
-            desc = "One of our servers.",
+	servers = {
+		[ "DARKRP" ] = {
+			icon = Material( "cm/server_icon.png" ),
+			ip = "127.0.0.1",
+			desc = "One of our servers.",
 
-            joinText = "JOIN"
-        },
-        [ "TTT" ] = {
-            icon = Material( "cm/server_icon_2.png" ),
-            ip = "127.0.0.1",
-            desc = "Another one of our servers.",
+			joinText = "JOIN"
+		},
+		[ "TTT" ] = {
+			icon = Material( "cm/server_icon_2.png" ),
+			ip = "127.0.0.1",
+			desc = "Another one of our servers.",
 
-            joinText = "JOIN"
-        }
-    }
+			joinText = "JOIN"
+		}
+	}
 })
 
 cm.registerElement( "RULES", {
-    showURL = "https://google.co.uk"
+	showURL = "https://google.co.uk"
 })

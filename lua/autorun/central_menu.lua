@@ -8,27 +8,29 @@
 
 cm = cm or {}
 
-cm.dir = "central_menu"
+local function findInFolder( currentFolder )
+	currentFolder = currentFolder or rootFolder
 
-function cm.Include( dir )
-	if not dir then return end
-	dir = ( cm.dir .. "/" .. dir ):lower( )
+	local files, folders = file.Find( currentFolder .. "*", "LUA" )
 
-	if SERVER and dir:find( "sv_" ) then
-		include( dir )
-	elseif dir:find( "cl_" ) then
-		if SERVER then
-			AddCSLuaFile( dir )
-		else
-			include( dir )
+	for _, File in pairs( files ) do
+		if SERVER and File:find( "sv_" ) then
+			include( currentFolder .. File )
+		elseif File:find( "cl_" ) then
+			if SERVER then AddCSLuaFile( currentFolder .. File )
+			else include( currentFolder .. File ) end
+		elseif File:find( "sh_" ) then
+			if SERVER then AddCSLuaFile( currentFolder .. File ) end
+			include( currentFolder .. File )
 		end
-	elseif dir:find( "sh_" ) then
-		AddCSLuaFile( dir )
-		include( dir )
+	end
+
+	for _, folder in pairs( folders ) do
+		findInFolder( currentFolder .. folder .. "/" )
 	end
 end
 
-cm.Include(  "cl_include.lua" )
+findInFolder( "central_menu/" )
 
 if SERVER then
 	resource.AddWorkshop( "761352831" )
