@@ -23,7 +23,7 @@ local FKeyToHook = {
 hook.Add( "PlayerBindPress", "cm", function( client, bind, pressed )
     local _bind = string.match( string.lower( bind ), "gm_[a-z]+[12]?" )
     if _bind and FBinds[ _bind ] then
-        hook.Call( FBinds[ _bind ], GAMEMODE )
+        hook.Call( FBinds[ _bind ], gmod.GetGamemode() )
     end
 end )
 
