@@ -14,15 +14,15 @@ Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 	3. disable the f1menu module by setting the config to `true`
 ]]
 
-cm.registerUneditableConfig( "menu_key", "F1" ) -- Available hotkeys (F1, F2, F3, F4)
+cm.registerUneditableConfig( "menu_key", "F2" ) -- Available hotkeys (F1, F2, F3, F4)
 cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables material background image and uses main_color client configuration
 cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" ) -- Material background path, make sure you FastDL/Workshop it
 cm.registerUneditableConfig( "element_title_force_uppercase", true ) -- Forces element button titles to be in UPPERCASE or not
 cm.registerUneditableConfig( "can_edit_clientside_settings", true ) -- Enforces the ability to set clientside customization
 cm.registerUneditableConfig( "show_avatar", true ) -- Show avatar button
 
-cm.registerClientConfig( "theme_elements_color", Color( 255, 255, 255 ), "The theme's element's colour", nil, { category = "appearance" } )
-cm.registerClientConfig( "theme_elements_widget_color", Color( 255, 255, 255 ), "The theme's element's theme widget colour", nil, { category = "appearance" } )
+cm.registerClientConfig( "theme_elements_color", color_white, "The theme's element's colour", nil, { category = "appearance" } )
+cm.registerClientConfig( "theme_elements_widget_color", color_white, "The theme's element's theme widget colour", nil, { category = "appearance" } )
 cm.registerClientConfig( "main_color", Color( 26, 28, 89 ), "The theme's main colour", nil, { category = "appearance" } )
 cm.registerClientConfig( "gradient_color", Color( 25, 25, 25 ), "The theme's gradient main colour", nil, { category = "appearance" } )
 cm.registerClientConfig( "fade_time", 0.5, "Fade time for animations within the theme", nil, { category = "appearance" } )
@@ -32,14 +32,14 @@ cm.registerClientConfig( "font", "Roboto", "The theme's font", function( _, newF
 	hook.Run( "loadFonts", newFont )
 end, { category = "appearance" } )
 
-cm.registerClientConfig( "element_button_color", Color( 255, 255, 255 ), "Button colour within the theme", nil, { category = "element button appearance" } )
+cm.registerClientConfig( "element_button_color", color_white, "Button colour within the theme", nil, { category = "element button appearance" } )
 cm.registerClientConfig( "element_button_disabled_color", Color( 125, 125, 125 ), "Disabled button colour within the theme", nil, { category = "element button appearance" } )
 cm.registerClientConfig( "element_button_hover_color", Color( 235, 235, 235 ), "Hovered button colour within the theme", nil, { category = "element button appearance" } )
 cm.registerClientConfig( "element_button_down_color", Color( 215, 215, 215 ), "Pressed down button colour within the theme", nil, { category = "element button appearance" } )
 
-cm.registerClientConfig( "button_text_color", Color( 255, 255, 255 ), "Text colour within the theme", nil, { category = "button appearance" } )
+cm.registerClientConfig( "button_text_color", color_white, "Text colour within the theme", nil, { category = "button appearance" } )
 cm.registerClientConfig( "button_text_color_inverted", Color( 0, 0, 0 ), "Inverted text color within the theme", nil, { category = "button appearance" } )
-cm.registerClientConfig( "button_bg_color", Color( 255, 255, 255 ), "Button background color within the theme", nil, { category = "button appearance" } )
+cm.registerClientConfig( "button_bg_color", color_white, "Button background color within the theme", nil, { category = "button appearance" } )
 
 cm.registerClientConfig( "ask_on_close", true, "Whether to ask to close the frame when you press the close button", nil, { category = "general configuration" } )
 
@@ -56,7 +56,7 @@ cm.registerElement( "STAFF", {
 	--customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
 
 	staff = {
-		[ "admin" ] = Color( 255, 255, 255 ),
+		[ "admin" ] = color_white,
 		[ "superadmin" ] = Color( 51, 125, 255 ),
 		[ "owner" ] = Color( 235, 51, 51 )
 	}

@@ -1,15 +1,28 @@
 --[[
-  Central UI Menu
-  Created by http://steamcommunity.com/id/Devul/ and http://steamcommunity.com/id/fruitwasp/
-  Do not redistribute this software without permission from authors
+    Central UI Menu
+    Created by http://steamcommunity.com/id/Devul/ and http://steamcommunity.com/id/fruitwasp/
+    Do not redistribute this software without permission from authors
 
-  Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
+    Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 ]]--
 
-local FRAME = {}
 local gradient = Material( "gui/gradient" )
 local gradientr = Material( "vgui/gradient-r" )
 local glowMat = Material( "particle/Particle_Glow_04_Additive" )
+local blur = Material( "pp/blurscreen" )
+
+local centralMenu
+
+cm.toggleMenu = function()
+    if IsValid( centralMenu ) then
+        centralMenu:toggle()
+    else
+        centralMenu = vgui.Create( "centralMenuFrame" )
+        centralMenu:setUp()
+    end
+end
+
+local FRAME = {}
 
 function FRAME:Init()
     self:StretchToParent( 0, 0, 0, 0 )
@@ -21,44 +34,37 @@ function FRAME:Init()
     self:MakePopup()
 end
 
-local FKeyToKeyEnum = {
-    ["F1"] = KEY_F1,
-    ["F2"] = KEY_F2,
-    ["F3"] = KEY_F3,
-    ["F4"] = KEY_F4
-}
+function FRAME:fadeIn()
+    self.fadingIn = true
 
-function FRAME:Paint()
-    if self.nextClose and self.nextClose > CurTime() then return end
-
-    if input.IsKeyDown( FKeyToKeyEnum[ cm.getUnEditableData( "menu_key", "F1" ) ] or "" ) or input.IsKeyDown( KEY_ESCAPE ) then
-    	if not self.isFadingOut then
-    		self:fadeOut()
-    	end
-    end
-end
-
-local fade = function( self )
-    self:AlphaTo( 0, cm.getClientData( "fade_time", 0.5 ), 0, function() self.isFadingOut = false self:Close() end )
-end
-
-function FRAME:fadeOut()
-    self.isFadingOut = true
-
-    local x, y = self.background:GetPos()
-    if x == 0 and y == 0 then fade( self ) return end
-
-    self.background:MoveTo( 0, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
-        fade( self )
+    self:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0, function()
+        self:SetVisible( true )
+        self.fadingIn = false
     end )
 end
 
+function FRAME:fadeOut()
+    self.fadingOut = true
+
+    self.background:MoveTo( 0, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
+        self:AlphaTo( 0, cm.getClientData( "fade_time", 0.5 ), 0, function()
+            self.fadingOut = false
+            self:Close()
+        end )
+    end )
+end
+
+function FRAME:toggle()
+    if self.fadingIn or self.fadingOut then return end
+
+    self:SetVisible( not self:IsVisible() )
+end
 
 function FRAME:setUp()
     local buttonDisabledColor = cm.getClientData( "element_button_disabled_color", Color( 125, 125, 125 ) )
     local buttonDownColor = cm.getClientData( "element_button_down_color", Color( 235, 235, 235 ) )
     local buttonHoverColor = cm.getClientData( "element_button_hover_color", Color( 215, 215, 215 ) )
-    local buttonColor = cm.getClientData( "element_button_color", Color( 255, 255, 255 ) )
+    local buttonColor = cm.getClientData( "element_button_color", color_white )
 
     self.background = self:Add( "DPanel" )
     self.background:SetSize( self:GetWide() * 3, self:GetTall() )
@@ -68,18 +74,20 @@ function FRAME:setUp()
 
     local bgMat = Material( cm.getUnEditableData( "background_material", "cm/gmod_background.jpg" ) )
     self.background.Paint = function( pnl, w, h )
+        local scrW, scrH = ScrW(), ScrH()
+
         draw.RoundedBox( 0, 0, 0, w, h, color )
-        draw.RoundedBox( 0, ScrW(), 0, w - ScrW(), h, gradientCol )
+        draw.RoundedBox( 0, scrW, 0, w - scrH, h, gradientCol )
 
         if not cm.getUnEditableData( "background_material_disabled", false ) then
-    		surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
-    		surface.SetMaterial( bgMat )
-    		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+            surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
+            surface.SetMaterial( bgMat )
+            surface.DrawTexturedRect( 0, 0, scrW, scrH )
         end
 
         surface.SetDrawColor( gradientCol )
         surface.SetMaterial( gradientr )
-        surface.DrawTexturedRect( ScrW() * 0.75, 0, ScrW() * 0.25, h )
+        surface.DrawTexturedRect( scrW * 0.75, 0, scrH * 0.25, h )
     end
 
     self.leftLayout = self:Add( "DIconLayout" )
@@ -88,9 +96,10 @@ function FRAME:setUp()
     self.leftLayout:SetWide( 160 )
     self.leftLayout:SetSpaceX( 4 )
 
-    local elementsCol = cm.getClientData( "theme_elements_color", Color( 255, 255, 255 ) )
+    local elementsCol = cm.getClientData( "theme_elements_color", color_white )
+    elementsCol = Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 )
     self.leftLayout.Paint = function( pnl, w, h )
-        surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
+        surface.SetDrawColor( elementsCol )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( w - 1, 0, 1, h )
     end
@@ -103,7 +112,7 @@ function FRAME:setUp()
     self.buttonLayout:SetSpaceX( 4 )
 
     self.buttonLayout.Paint = function( pnl, w, h )
-        surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
+        surface.SetDrawColor( elementsCol )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( 0, h - 1, w, 1 )
     end
@@ -126,7 +135,10 @@ function FRAME:setUp()
         self.elements[ Id ] = self.buttonLayout:Add( "DButton" )
         local button = self.elements[ Id ]
 
-        button:SetText( cm.getUnEditableData( "element_title_force_uppercase", false ) and string.upper( data.name ) or data.name )
+        button:SetText(
+        cm.getUnEditableData( "element_title_force_uppercase", false ) and string.upper( data.name )
+        or data.name )
+
         button:Dock( LEFT )
         button:SetWide( buttonW )
         button:SetFont( "cmLarge" )
@@ -144,11 +156,11 @@ function FRAME:setUp()
         button:SetDisabled( customCheck == false )
 
         button.UpdateColours = function( pnl, skin )
-        	if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
-        	if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
-        	if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
+            if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
+            if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
+            if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
-        	return pnl:SetTextStyleColor( buttonColor )
+            return pnl:SetTextStyleColor( buttonColor )
         end
 
         local increaseAmount = ScrW() / 6
@@ -195,10 +207,6 @@ function FRAME:setUp()
         end
 
         return
-    end
-
-    self.closeBtn.DoClick = function( pnl )
-        self:fadeOut()
     end
 
     self.closeLabel = self:Add( "DButton" )
@@ -272,7 +280,18 @@ function FRAME:setUp()
         local doDialogue = cm.getClientData( "ask_on_close" )
 
         if doDialogue then
-            cm.createDialogue( "CLOSE", "Do you want to close?", "Yes", function( dialogue ) dialogue:Close() self:fadeOut() end, "No", function( dialogue ) dialogue:Close() end )
+            cm.createDialogue(
+                "CLOSE",
+                "Do you want to close?",
+                "Yes",
+                function( dialogue )
+                    dialogue:Close()
+                    self:fadeOut()
+                end,
+                "No",
+                function( dialogue )
+                    dialogue:Close()
+                end )
         else
             self:fadeOut()
         end
@@ -308,22 +327,6 @@ end
 
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
 
-cm.create = function()
-    cm.frame = vgui.Create( "centralMenuFrame" )
-    cm.frame:setUp()
-
-    cm.frame:SetAlpha( 0 )
-    cm.frame:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
-
-    cm.frame.nextClose = CurTime() + 1
-end
-
-cm.close = function()
-    if not IsValid( cm.frame ) then return end
-
-    cm.frame:fadeOut()
-end
-
 local BUTTON = {}
 
 function BUTTON:Init()
@@ -331,7 +334,7 @@ function BUTTON:Init()
 end
 
 function BUTTON:Paint( w, h )
-    local buttonColor = cm.getClientData( "button_bg_color", Color( 255, 255, 255 ) )
+    local buttonColor = cm.getClientData( "button_bg_color", color_white )
 
     local isHovered = self:IsHovered()
     local xOverride, yOverride, wOverride, hOverride = self.xOverride or 0, self.yOverride or 0, self.wOverride or w, self.hOverride or h
@@ -364,21 +367,21 @@ function FRAME:Init()
     self:MakePopup()
 end
 
-local blur = Material( "pp/blurscreen" )
 function FRAME:Paint( w, h )
     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ) )
 
     surface.SetMaterial( blur )
-    surface.SetDrawColor( 255, 255, 255 )
+    surface.SetDrawColor( color_white )
 
     local x, y = self:LocalToScreen( 0, 0 )
 
+    local scrW, scrH = ScrW(), ScrH()
     for i = 0.2, 1, 0.2 do
         blur:SetFloat( "$blur", i * 4 )
         blur:Recompute()
 
         render.UpdateScreenEffectTexture()
-        surface.DrawTexturedRect( x * - 1, y * - 1, ScrW(), ScrH() )
+        surface.DrawTexturedRect( x * - 1, y * - 1, scrW, scrH )
     end
 end
 
@@ -453,13 +456,12 @@ function FRAME:Init()
     self:MakePopup()
 end
 
-local blur = Material( "pp/blurscreen" )
 function FRAME:Paint( w, h )
 
     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ))
 
     surface.SetMaterial( blur )
-    surface.SetDrawColor( 255, 255, 255 )
+    surface.SetDrawColor( color_white )
 
     local x, y = self:LocalToScreen( 0, 0 )
 
@@ -547,45 +549,45 @@ function FRAME:setUp()
             if not form then
                 local _type = type( value )
 
-				if _type == "number" then
-					form = "Int"
-					value = tonumber( value )
-				elseif _type == "boolean" then
-					form = "Boolean"
-					value = util.tobool( value )
-				else
-					form = "Generic"
-				end
+                if _type == "number" then
+                    form = "Int"
+                    value = tonumber( value )
+                elseif _type == "boolean" then
+                    form = "Boolean"
+                    value = tobool( value )
+                else
+                    form = "Generic"
+                end
             end
 
-			if form == "Generic" and type( value ) == "table" and value.r and value.g and value.b then
-				value = Vector( value.r / 255, value.g / 255, value.b / 255 )
-				form = "VectorColor"
-			end
+            if form == "Generic" and type( value ) == "table" and value.r and value.g and value.b then
+                value = Vector( value.r / 255, value.g / 255, value.b / 255 )
+                form = "VectorColor"
+            end
 
-			local row = self.properties:CreateRow( category, k )
-			row:Setup( form, v.data and v.data.data or {} )
-			row:SetValue( value )
-			row:SetToolTip( v.description )
+            local row = self.properties:CreateRow( category, k )
+            row:Setup( form, v.data and v.data.data or {} )
+            row:SetValue( value )
+            row:SetTooltip( v.description )
 
             local beforeVal = value
-			row.DataChanged = function( this, value )
+            row.DataChanged = function( this, data )
                 if form == "VectorColor" then
-					local vector = Vector( value )
+                    local vector = Vector( data )
 
-					value = Color( math.floor( vector.x * 255 ), math.floor( vector.y * 255 ), math.floor( vector.z * 255 ) )
-				elseif form == "Int" or form == "Float" then
-					value = tonumber( value )
+                    data = Color( math.floor( vector.x * 255 ), math.floor( vector.y * 255 ), math.floor( vector.z * 255 ) )
+                elseif form == "Int" or form == "Float" then
+                    data = tonumber( data )
 
-					if form == "Int" then
-						value = math.Round( value )
-					end
-				elseif form == "Boolean" then
-					value = util.tobool( value )
-				end
+                    if form == "Int" then
+                        data = math.Round( data )
+                    end
+                elseif form == "Boolean" then
+                    data = tobool( data )
+                end
 
-                cm.setClientData( k, value )
-                if v.callback then v.callback( beforeVal, value ) end
+                cm.setClientData( k, data )
+                if v.callback then v.callback( beforeVal, data ) end
             end
         end
     end
@@ -659,10 +661,6 @@ function BUTTON:setUp()
     self.bottomPanel.boxY = self.bottomPanel:GetTall()
     self.bottomPanel.textCol = 255
 
-    local topPanelW, topPanelH = self.topPanel:GetSize()
-
-    local nextClickDelay = 1
-    local nextClick = CurTime()
     self.bottomPanel.Paint = function( pnl, w, h )
         local hovered = pnl:IsHovered()
 
@@ -699,16 +697,17 @@ end
 function BUTTON:Paint( w, h )
     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 75 ) )
     surface.SetMaterial( blur )
-    surface.SetDrawColor( 255, 255, 255 )
+    surface.SetDrawColor( color_white )
 
     local x, y = self:LocalToScreen( 0, 0 )
 
+    local scrW, scrH = ScrW(), ScrH()
     for i = 2, 1, 0.2 do
         blur:SetFloat( "$blur", i * 5 )
         blur:Recompute()
 
         render.UpdateScreenEffectTexture()
-        surface.DrawTexturedRect( x * - 1, y * - 1, ScrW(), ScrH() )
+        surface.DrawTexturedRect( x * - 1, y * - 1, scrW, scrH )
     end
 end
 

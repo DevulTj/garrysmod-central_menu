@@ -8,6 +8,7 @@
 
 hook.Add( "loadFonts" , "fonts", function()
 	local fontFace = cm.getClientData( "font", "Roboto" )
+
 	surface.CreateFont( "cmLarge", {
 		font = fontFace,
 		size = 32,
@@ -35,16 +36,16 @@ hook.Add( "loadFonts" , "fonts", function()
 		weight = 500,
 		antialias = true
 	} )
-end)
+end )
 
-hook.Run( "loadFonts" )
+hook.Call( "loadFonts" )
 
 local blur = Material( "pp/blurscreen" )
 function cm.drawBlurAt( x, y, w, h, amount, passes )
 	amount = amount or 4
 
 	surface.SetMaterial( blur )
-	surface.SetDrawColor( 255, 255, 255 )
+	surface.SetDrawColor( color_white )
 
 	local scrW, scrH = ScrW(), ScrH()
 	local _x, _y = x / scrW, y / scrH
