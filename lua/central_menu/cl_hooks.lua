@@ -15,6 +15,8 @@ local allowedKeyBinds =
 }
 
 hook.Add( "PlayerBindPress", "cm", function( client, bind, pressed )
+    if not pressed then return end
+
     local key = allowedKeyBinds[ string.lower( bind ) ]
     if not key then return end
 
