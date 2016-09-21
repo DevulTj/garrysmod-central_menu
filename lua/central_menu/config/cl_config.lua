@@ -14,7 +14,7 @@ Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 	3. disable the f1menu module by setting the config to `true`
 ]]
 
-cm.registerUneditableConfig( "menu_key", "F2" ) -- Available hotkeys (F1, F2, F3, F4)
+cm.registerUneditableConfig( "menu_key", "F1" ) -- Available hotkeys (F1, F2, F3, F4)
 cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables material background image and uses main_color client configuration
 cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" ) -- Material background path, make sure you FastDL/Workshop it
 cm.registerUneditableConfig( "element_title_force_uppercase", true ) -- Forces element button titles to be in UPPERCASE or not
@@ -29,7 +29,7 @@ cm.registerClientConfig( "fade_time", 0.5, "Fade time for animations within the 
 cm.registerClientConfig( "element_pressed_fade_time", 0.5, "Fade time for when you press an element button", nil, { category = "appearance" } )
 
 cm.registerClientConfig( "font", "Roboto", "The theme's font", function( _, newFont )
-	hook.Run( "loadFonts", newFont )
+	hook.Call( "loadFonts", nil, newFont )
 end, { category = "appearance" } )
 
 cm.registerClientConfig( "element_button_color", Color( 255, 255, 255 ), "Button colour within the theme", nil, { category = "element button appearance" } )
