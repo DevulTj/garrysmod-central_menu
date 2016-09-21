@@ -46,7 +46,7 @@ end
 function FRAME:fadeOut()
     self.fadingOut = true
 
-    self.background:MoveTo( 0, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
+    self.background:MoveTo( 0.1, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
         self:AlphaTo( 0, cm.getClientData( "fade_time", 0.5 ), 0, function()
             self.fadingOut = false
             self:Close()
@@ -77,7 +77,7 @@ function FRAME:setUp()
         local scrW, scrH = ScrW(), ScrH()
 
         draw.RoundedBox( 0, 0, 0, w, h, color )
-        draw.RoundedBox( 0, scrW, 0, w - scrH, h, gradientCol )
+        draw.RoundedBox( 0, scrW, 0, w - scrW, h, gradientCol )
 
         if not cm.getUnEditableData( "background_material_disabled", false ) then
             surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
@@ -87,7 +87,7 @@ function FRAME:setUp()
 
         surface.SetDrawColor( gradientCol )
         surface.SetMaterial( gradientr )
-        surface.DrawTexturedRect( scrW * 0.75, 0, scrH * 0.25, h )
+        surface.DrawTexturedRect( scrW * 0.75, 0, scrW * 0.25, h )
     end
 
     self.leftLayout = self:Add( "DIconLayout" )
@@ -209,6 +209,27 @@ function FRAME:setUp()
         return
     end
 
+    self.closeBtn.DoClick = function( pnl )
+        local doDialogue = cm.getClientData( "ask_on_close" )
+
+        if doDialogue then
+            cm.createDialogue(
+                "CLOSE",
+                "Do you want to close?",
+                "Yes",
+                function( dialogue )
+                    dialogue:Close()
+                    self:fadeOut()
+                end,
+                "No",
+                function( dialogue )
+                    dialogue:Close()
+                end )
+        else
+            self:fadeOut()
+        end
+    end
+
     self.closeLabel = self:Add( "DButton" )
     self.closeLabel:SetText( "CLOSE" )
     self.closeLabel:SetPos( -120 , ScrH() * 0.8 )
@@ -273,27 +294,6 @@ function FRAME:setUp()
 
         self.settingsBtn.DoClick = function( pnl )
             cm.createSettingsFrame()
-        end
-    end
-
-    self.closeBtn.DoClick = function( pnl )
-        local doDialogue = cm.getClientData( "ask_on_close" )
-
-        if doDialogue then
-            cm.createDialogue(
-                "CLOSE",
-                "Do you want to close?",
-                "Yes",
-                function( dialogue )
-                    dialogue:Close()
-                    self:fadeOut()
-                end,
-                "No",
-                function( dialogue )
-                    dialogue:Close()
-                end )
-        else
-            self:fadeOut()
         end
     end
 
