@@ -28,7 +28,7 @@ cm.registerClientConfig( "gradient_color", Color( 25, 25, 25 ), "The theme's gra
 cm.registerClientConfig( "fade_time", 0.5, "Fade time for animations within the theme", nil, { category = "appearance" } )
 cm.registerClientConfig( "element_pressed_fade_time", 0.5, "Fade time for when you press an element button", nil, { category = "appearance" } )
 
-cm.registerClientConfig( "font", "Roboto", "The theme's font", function( _, newFont )
+cm.registerClientConfig( "font", "Futura ICG", "The theme's font", function( _, newFont )
 	hook.Call( "loadFonts", nil, newFont )
 end, { category = "appearance" } )
 
