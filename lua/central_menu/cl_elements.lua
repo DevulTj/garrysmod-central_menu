@@ -13,13 +13,17 @@ local blur = Material( "pp/blurscreen" )
 
 local centralMenu
 
+function cm.getCentralMenu()
+    return centralMenu
+end
+
 cm.toggleMenu = function()
-    if IsValid( centralMenu ) then
-        centralMenu:toggle()
-    else
+    if not IsValid( centralMenu ) then
         centralMenu = vgui.Create( "centralMenuFrame" )
-        centralMenu:setUp()
     end
+
+    centralMenu:SetAlpha( 0 )
+    centralMenu:fadeIn()
 end
 
 local FRAME = {}
@@ -28,22 +32,34 @@ function FRAME:Init()
     self:StretchToParent( 0, 0, 0, 0 )
     self:SetDraggable( false )
     self:ShowCloseButton( false )
-
     self:SetTitle( "" )
 
     self:MakePopup()
+
+    self:setUp()
+end
+
+function FRAME:canFade()
+    if self.fadingIn or self.fadingOut then return false end
+
+    return true
 end
 
 function FRAME:fadeIn()
+    if not self:canFade() then return end
+
     self.fadingIn = true
 
+    self:refreshBackground()
+
     self:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0, function()
-        self:SetVisible( true )
         self.fadingIn = false
     end )
 end
 
 function FRAME:fadeOut()
+    if not self:canFade() then return end
+
     self.fadingOut = true
 
     self.background:MoveTo( 0.1, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
@@ -54,13 +70,21 @@ function FRAME:fadeOut()
     end )
 end
 
-function FRAME:toggle()
-    if self.fadingIn or self.fadingOut then return end
+function FRAME:refreshBackground()
+    if cm.getUnEditableData( "background_material_disabled", false ) then return end
 
-    self:SetVisible( not self:IsVisible() )
+    local backgroundMaterial = cm.getClientData( "background_material", "cm/gmod_background.jpg" )
+
+    if istable( backgroundMaterial ) then
+        backgroundMaterial = table.Random( backgroundMaterial )
+    end
+
+    self.backgroundMaterial = Material( backgroundMaterial )
 end
 
 function FRAME:setUp()
+    self:refreshBackground()
+
     local buttonDisabledColor = cm.getClientData( "element_button_disabled_color", Color( 125, 125, 125 ) )
     local buttonDownColor = cm.getClientData( "element_button_down_color", Color( 235, 235, 235 ) )
     local buttonHoverColor = cm.getClientData( "element_button_hover_color", Color( 215, 215, 215 ) )
@@ -69,19 +93,18 @@ function FRAME:setUp()
     self.background = self:Add( "DPanel" )
     self.background:SetSize( self:GetWide() * 3, self:GetTall() )
 
-    local color = cm.getClientData( "main_color", color_white )
+    local color = cm.getClientData( "main_color", color_black )
     local gradientCol = cm.getClientData( "gradient_color", color_black )
 
-    local bgMat = Material( cm.getUnEditableData( "background_material", "cm/gmod_background.jpg" ) )
     self.background.Paint = function( pnl, w, h )
         local scrW, scrH = ScrW(), ScrH()
 
         draw.RoundedBox( 0, 0, 0, w, h, color )
         draw.RoundedBox( 0, scrW, 0, w - scrW, h, gradientCol )
 
-        if not cm.getUnEditableData( "background_material_disabled", false ) then
+        if self.backgroundMaterial then
             surface.SetDrawColor( Color( 255, 255, 255, self:GetAlpha() ) )
-            surface.SetMaterial( bgMat )
+            surface.SetMaterial( self.backgroundMaterial )
             surface.DrawTexturedRect( 0, 0, scrW, scrH )
         end
 
@@ -526,7 +549,7 @@ function FRAME:setUp()
     end
 
     self.scroll = self.container:Add( "DScrollPanel" )
-    self.scroll:SetPos( 0, 34 )
+    self.scroll:Dock( FILL )
     self.scroll:SetSize( ScrH() * 0.75, ScrH() * 0.75 - 112 )
     self.scroll:InvalidateParent( true )
 
@@ -555,6 +578,8 @@ function FRAME:setUp()
                 elseif _type == "boolean" then
                     form = "Boolean"
                     value = tobool( value )
+                elseif _type == "table" and not value.r then
+                    form = "Combo"
                 else
                     form = "Generic"
                 end
@@ -567,8 +592,18 @@ function FRAME:setUp()
 
             local row = self.properties:CreateRow( category, k )
             row:Setup( form, v.data and v.data.data or {} )
-            row:SetValue( value )
             row:SetTooltip( v.description )
+
+            if _type == "table" and not value.r then
+                for _, rowValue in pairs( value ) do
+                    row:AddChoice( rowValue, rowValue, true )
+                    print(rowValue)
+                end
+            end
+
+            if _type ~= "table" then
+                row:SetValue( value )
+            end
 
             local beforeVal = value
             row.DataChanged = function( this, data )
