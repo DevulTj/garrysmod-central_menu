@@ -20,9 +20,13 @@ hook.Add( "PlayerBindPress", "cm", function( client, bind, pressed )
     local key = allowedKeyBinds[ string.lower( bind ) ]
     if not key then return end
 
-    local chosenKey = string.lower( cm.getUnEditableData( "menu_key", "F1" ) )
+    local chosenKey = string.lower( cm.getUnEditableData( "menu_key", "f1" ) )
     if key ~= chosenKey then return end
 
     cm.toggleMenu()
     return true
 end )
+
+if cm.getClientData( "auto_open_on_join", true ) then
+    hook.Add( "InitPostEntity", "centralMenu", cm.toggleMenu )
+end
