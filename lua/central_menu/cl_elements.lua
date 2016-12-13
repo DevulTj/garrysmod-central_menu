@@ -594,7 +594,8 @@ function FRAME:setUp()
             row:Setup( form, v.data and v.data.data or {} )
             row:SetTooltip( v.description )
 
-            if _type == "table" and not value.r then
+            local _type = type( value )
+            if _type == "table" and not IsColor(value) then
                 for _, rowValue in pairs( value ) do
                     row:AddChoice( rowValue, rowValue, true )
                     print(rowValue)
