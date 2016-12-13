@@ -16,7 +16,7 @@ Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 
 cm.registerUneditableConfig( "menu_key", "F1" ) -- Available hotkeys (F1, F2, F3, F4)
 cm.registerUneditableConfig( "background_material_disabled", false ) -- Disables material background image and uses main_color client configuration
-cm.registerUneditableConfig( "background_material", "cm/gmod_background.jpg" ) -- Material background path, make sure you FastDL/Workshop it
+cm.registerClientConfig( "background_material", { "cm/gmod_background.jpg" }, "The background of Central Menu", nil, { category = "appearance" } ) -- Material background path, make sure you FastDL/Workshop it
 cm.registerUneditableConfig( "element_title_force_uppercase", true ) -- Forces element button titles to be in UPPERCASE or not
 cm.registerUneditableConfig( "can_edit_clientside_settings", true ) -- Enforces the ability to set clientside customization
 cm.registerUneditableConfig( "show_avatar", true ) -- Show avatar button
