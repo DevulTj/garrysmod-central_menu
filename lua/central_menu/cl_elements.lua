@@ -569,40 +569,40 @@ function FRAME:setUp()
             local form = v.data and v.data.form
             local value = cm.getClientData( k, cm.data.stored[ k ].default )
 
-            if not form then
-                local _type = type( value )
+            local _type = type( value )
 
+            if not form then
                 if _type == "number" then
                     form = "Int"
                     value = tonumber( value )
                 elseif _type == "boolean" then
                     form = "Boolean"
                     value = tobool( value )
-                elseif _type == "table" and not value.r then
-                    form = "Combo"
+                elseif _type == "table" then
+                    if not value.r then
+                        form = "Combo"
+                    else
+                        form = "VectorColor"
+                        value = Vector( value.r / 255, value.g / 255, value.b / 255 )
+                        _type = type( value )
+                    end
                 else
                     form = "Generic"
                 end
-            end
-
-            if form == "Generic" and type( value ) == "table" and value.r and value.g and value.b then
-                value = Vector( value.r / 255, value.g / 255, value.b / 255 )
-                form = "VectorColor"
             end
 
             local row = self.properties:CreateRow( category, k )
             row:Setup( form, v.data and v.data.data or {} )
             row:SetTooltip( v.description )
 
-            local _type = type( value )
-            if _type == "table" and not IsColor( value ) then
+            if form == "Combo" then
                 for _, rowValue in pairs( value ) do
                     row:AddChoice( rowValue, rowValue, true )
                     print(rowValue)
                 end
             end
 
-            if _type ~= "table" then
+            if form ~= "Combo" then
                 row:SetValue( value )
             end
 
