@@ -18,12 +18,12 @@ function cm.getCentralMenu()
 end
 
 cm.toggleMenu = function()
-    if not IsValid( centralMenu ) then
+    if IsValid( centralMenu ) then
+        centralMenu:fadeOut()
+    else
         centralMenu = vgui.Create( "centralMenuFrame" )
+        centralMenu:fadeIn()
     end
-
-    centralMenu:SetAlpha( 0 )
-    centralMenu:fadeIn()
 end
 
 local FRAME = {}
@@ -52,6 +52,7 @@ function FRAME:fadeIn()
 
     self:refreshBackground()
 
+    self:SetAlpha( 0 )
     self:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0, function()
         self.fadingIn = false
     end )
@@ -343,9 +344,6 @@ function FRAME:setUp()
 
     local firstElement = cm.config.ELEMENTS[ 1 ]
     if firstElement then cm.getCallback( firstElement, self ) end
-
-    self.panel:SetAlpha( 0 )
-    self.panel:AlphaTo( 255, cm.getClientData( "fade_time", 0.5 ), 0 )
 end
 
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
