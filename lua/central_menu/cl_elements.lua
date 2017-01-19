@@ -182,7 +182,7 @@ function FRAME:setUp()
         button.UpdateColours = function( pnl, skin )
             if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
             if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
-            if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
+            if pnl:IsHovered() then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
             return pnl:SetTextStyleColor( buttonColor )
         end
@@ -212,7 +212,7 @@ function FRAME:setUp()
 
     self.closeBtn.spam = CurTime()
     self.closeBtn.Paint = function( pnl, w, h )
-        if pnl.Hovered then
+        if pnl:IsHovered() then
             if not pnl.fading and self.closeBtn.spam < CurTime() then
                 self.closeLabel.fading = true
                 self.closeBtn.spam = CurTime() + 0.5
@@ -265,7 +265,7 @@ function FRAME:setUp()
     self.closeLabel.UpdateColours = function( pnl, skin )
         if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
         if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
-        if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
+        if pnl:IsHovered() then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
         return pnl:SetTextStyleColor( buttonColor )
     end
@@ -282,7 +282,7 @@ function FRAME:setUp()
         self.settingsLabel.UpdateColours = function( pnl, skin )
             if pnl:GetDisabled() then return pnl:SetTextStyleColor( buttonDisabledColor ) end
             if pnl.Depressed or pnl.m_bSelected then return pnl:SetTextStyleColor( buttonDownColor ) end
-            if pnl.Hovered then return pnl:SetTextStyleColor( buttonHoverColor ) end
+            if pnl:IsHovered() then return pnl:SetTextStyleColor( buttonHoverColor ) end
 
             return pnl:SetTextStyleColor( buttonColor )
         end
@@ -295,7 +295,7 @@ function FRAME:setUp()
 
         self.settingsBtn.spam = CurTime()
         self.settingsBtn.Paint = function( pnl, w, h )
-            if pnl.Hovered then
+            if pnl:IsHovered() then
                 if not pnl.fading and self.settingsBtn.spam < CurTime() then
                     self.settingsLabel.fading = true
                     self.settingsBtn.spam = CurTime() + 0.3
@@ -745,11 +745,11 @@ function BUTTON:Paint( w, h )
     end
 end
 
-function BUTTON:PaintOver()
+function BUTTON:PaintOver( width, height )
     local pressed = self.Depressed or self.m_bSelected
 
     self.xOverride, self.yOverride = pressed and 1 or nil, pressed and 1 or nil
-    self.wOverride, self.hOverride = pressed and ( self:GetWide() - 2 ) or nil, pressed and ( self:GetTall() - 2 ) or nil
+    self.wOverride, self.hOverride = pressed and ( width - 2 ) or nil, pressed and ( height - 2 ) or nil
 end
 
 derma.DefineControl( "centralMenuServerButton", nil, BUTTON, "DButton" )
