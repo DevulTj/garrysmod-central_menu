@@ -68,14 +68,14 @@ cm.registerElement( "SERVERS", {
 	servers = {
 		[ "DARKRP" ] = {
 			icon = Material( "cm/server_icon.png" ),
-			ip = "127.0.0.1",
+			ip = "89.34.97.159",
 			desc = "One of our servers.",
 
 			joinText = "JOIN"
 		},
 		[ "TTT" ] = {
 			icon = Material( "cm/server_icon_2.png" ),
-			ip = "127.0.0.1",
+			ip = "89.34.97.159",
 			desc = "Another one of our servers.",
 
 			joinText = "JOIN"
@@ -86,3 +86,12 @@ cm.registerElement( "SERVERS", {
 cm.registerElement( "RULES", {
 	showURL = "https://google.co.uk"
 })
+
+cm.registerElement( "OPTIONS", {
+	callback = function()
+		timer.Simple( 0, function() RunConsoleCommand( "gameui_activate" ) end )
+		RunConsoleCommand( "gamemenucommand", "OpenOptionsDialog" )
+
+		cm.toggleMenu()
+	end
+} )

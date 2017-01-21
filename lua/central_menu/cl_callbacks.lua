@@ -46,7 +46,7 @@ cm.addDataCheck( "staff", function( data, frame )
     layout:SetSpaceY( 4 )
 
     local groupUsers = {}
-    for Id, client in pairs( player.GetAll() ) do
+    for Id, client in ipairs( player.GetAll() ) do
         local usergroup = client:GetUserGroup()
         if not staffGroups[ usergroup ] then continue end
 
@@ -127,21 +127,21 @@ cm.addDataCheck( "servers", function( data, frame )
     layout:SetSpaceX( 4 )
     layout:SetSpaceY( 4 )
 
-    for serverName, data in pairs( servers ) do
+    for serverName, serverInfo in pairs( servers ) do
         local server = layout:Add( "centralMenuServerButton" )
         server:SetSize( 320, 256 )
         server:setText( serverName )
-        server:setDesc( data.desc )
-        server:setJoinText( data.joinText )
-        server:setServerIcon( data.icon )
-        server:setIP( data.ip )
+        server:setDesc( serverInfo.desc )
+        server:setJoinText( serverInfo.joinText )
+        server:setServerIcon( serverInfo.icon )
+        server:setIP( serverInfo.ip )
 
         server:setUp()
     end
 end )
 
 local gradient = Material( "gui/gradient" )
-cm.addDataCheck( "showGreeting", function( data, frame )
+cm.addDataCheck( "showGreeting", function( _, frame )
     local time = os.time()
     local day = os.date( "%A", time )
 
@@ -162,7 +162,7 @@ cm.addDataCheck( "showGreeting", function( data, frame )
     spacer:SetHeight( 1 )
 
     local elementsCol = cm.getClientData( "theme_elements_color", color_white )
-    spacer.Paint = function( pnl, w, h )
+    spacer.Paint = function( _, w, h )
         surface.SetDrawColor( Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 ) )
         surface.SetMaterial( gradient )
         surface.DrawTexturedRect( 0, 0, w / 2, h )
