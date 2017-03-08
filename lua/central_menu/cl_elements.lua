@@ -724,7 +724,18 @@ function BUTTON:setUp()
     end
 
     self.bottomPanel.DoClick = function( pnl )
-        cm.createDialogue( "JOIN SERVER", "Do you want join " .. self.textText .. "?" , "Yes", function( dialogue ) dialogue:Close() RunConsoleCommand( "connect", self:getIP() ) end, "No", function( dialogue ) dialogue:Close() end )
+        cm.createDialogue( 
+            "JOIN SERVER", 
+            "Do you want join " .. self.textText .. "?" , 
+            "Yes", 
+            function( dialogue ) 
+                dialogue:Close() 
+                LocalPlayer():ConCommand( "connect " .. self:getIP() ) 
+            end, 
+            "No", 
+            function( dialogue ) 
+                dialogue:Close() 
+            end )
     end
 end
 
