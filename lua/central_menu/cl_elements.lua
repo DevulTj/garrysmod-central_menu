@@ -33,6 +33,7 @@ function FRAME:Init()
     self:SetDraggable( false )
     self:ShowCloseButton( false )
     self:SetTitle( "" )
+    self:SetKeyboardInputEnabled( false )
 
     self:MakePopup()
 
@@ -346,15 +347,6 @@ function FRAME:setUp()
     if firstElement then cm.getCallback( firstElement, self ) end
 end
 
-function FRAME:Think()
-    local bind = cm.getUnEditableData( "menu_key", KEY_F1 )
-    if input.IsKeyDown( bind ) and not self.fadingOut then
-        cm.toggleMenu()
-
-        return
-    end
-end
-
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
 
 local BUTTON = {}
@@ -487,8 +479,7 @@ function FRAME:Init()
 end
 
 function FRAME:Paint( w, h )
-
-    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ))
+    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 200 ) )
 
     surface.SetMaterial( blur )
     surface.SetDrawColor( color_white )
