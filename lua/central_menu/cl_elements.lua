@@ -346,6 +346,15 @@ function FRAME:setUp()
     if firstElement then cm.getCallback( firstElement, self ) end
 end
 
+function FRAME:Think()
+    local bind = cm.getUnEditableData( "menu_key", KEY_F1 )
+    if input.IsKeyDown( bind ) and not self.fadingOut then
+        cm.toggleMenu()
+
+        return
+    end
+end
+
 derma.DefineControl( "centralMenuFrame", nil, FRAME, "DFrame" )
 
 local BUTTON = {}
@@ -724,17 +733,17 @@ function BUTTON:setUp()
     end
 
     self.bottomPanel.DoClick = function( pnl )
-        cm.createDialogue( 
-            "JOIN SERVER", 
-            "Do you want join " .. self.textText .. "?" , 
-            "Yes", 
-            function( dialogue ) 
-                dialogue:Close() 
-                LocalPlayer():ConCommand( "connect " .. self:getIP() ) 
-            end, 
-            "No", 
-            function( dialogue ) 
-                dialogue:Close() 
+        cm.createDialogue(
+            "JOIN SERVER",
+            "Do you want join " .. self.textText .. "?" ,
+            "Yes",
+            function( dialogue )
+                dialogue:Close()
+                LocalPlayer():ConCommand( "connect " .. self:getIP() )
+            end,
+            "No",
+            function( dialogue )
+                dialogue:Close()
             end )
     end
 end
