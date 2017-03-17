@@ -33,11 +33,11 @@ function FRAME:Init()
     self:SetDraggable( false )
     self:ShowCloseButton( false )
     self:SetTitle( "" )
-    self:SetKeyboardInputEnabled( false )
 
     self:MakePopup()
 
     self:setUp()
+    self:SetKeyboardInputEnabled( false )
 end
 
 function FRAME:canFade()
