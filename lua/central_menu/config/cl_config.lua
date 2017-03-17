@@ -57,10 +57,20 @@ cm.registerElement( "FORUMS", {
 cm.registerElement( "STAFF", {
 	--customCheck = function( client, panel ) return client:IsAdmin() or client:IsSuperAdmin() end,
 
+	headerMessage = "This list shows the current online Staff members, contact them if you have any issues.",
 	staff = {
-		[ "admin" ] = Color( 255, 255, 255 ),
-		[ "superadmin" ] = Color( 51, 125, 255 ),
-		[ "owner" ] = Color( 235, 51, 51 )
+		[ "admin" ] = {
+			name = "Administrator",
+			color = Color( 255, 255, 255 ),
+		},
+		[ "superadmin" ] = {
+			name = "Senior Administrator",
+			color = Color( 51, 125, 255 ),
+		},
+		[ "founder" ] = {
+			name = "Founder",
+			color = Color( 235, 51, 51 ),
+		}
 	}
 })
 
@@ -92,6 +102,5 @@ cm.registerElement( "OPTIONS", {
 		timer.Simple( 0, function() RunConsoleCommand( "gameui_activate" ) end )
 		RunConsoleCommand( "gamemenucommand", "OpenOptionsDialog" )
 
-		cm.toggleMenu()
 	end
 } )

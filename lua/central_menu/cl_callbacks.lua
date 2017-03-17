@@ -55,6 +55,8 @@ cm.addDataCheck( "staff", function( data, frame )
     end
 
     for userGroup, clients in SortedPairs( groupUsers ) do
+        local groupData = staffGroups[ userGroup ]
+
         local _layout = layout:Add( "DIconLayout" )
         _layout:Dock( TOP )
         _layout:DockMargin( 0, 0, 0, 4 )
@@ -65,15 +67,15 @@ cm.addDataCheck( "staff", function( data, frame )
 
         local label = _layout:Add( "DLabel" )
         label:Dock( TOP )
-        label:SetText( userGroup )
+        label:SetText( groupData.name or userGroup )
         label:SetFont( "cmMedium" )
-        label:SetTextColor( staffGroups[ userGroup ] )
+        label:SetTextColor( groupData.color or color_white )
         label:SetExpensiveShadow( 1, Color( 0, 0, 0, 185 ) )
 
         for _, client in pairs( clients ) do
             local usergroup = client:GetUserGroup()
-            if staffGroups[ usergroup ] then
 
+            if groupData then
                 local avatar = _layout:Add( "AvatarImage" )
                 avatar:SetSize( 128, 128 )
                 avatar:Center()
@@ -90,7 +92,7 @@ cm.addDataCheck( "staff", function( data, frame )
                 button.textCol = 255
                 button.boxY = button:GetTall() / 2
                 button.Paint = function( self, w, h )
-                    local buttonColor = staffGroups[ usergroup ]
+                    local buttonColor = groupData.color
 
                     local hovered = self:IsHovered()
 
