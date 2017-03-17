@@ -6,25 +6,16 @@
     Developer information: {{ user_id }} : {{ script_id }} : {{ script_version_id }}
 ]]--
 
-local allowedKeyBinds =
-{
-    gm_showhelp = "f1",
-    gm_showteam = "f2",
-    gm_showspare1 = "f3",
-    gm_showspare2 = "f4",
-}
+hook.Add( "PlayerButtonUp", "dThirdPerson_keyBind", function( player, buttonId )
+	if not IsFirstTimePredicted() then return end
+	if player ~= LocalPlayer() then return end
+	if gui.IsGameUIVisible() then return end
+	if player:IsTyping() then return end
 
-hook.Add( "PlayerBindPress", "cm", function( client, bind, pressed )
-    if not pressed then return end
-
-    local key = allowedKeyBinds[ string.lower( bind ) ]
-    if not key then return end
-
-    local chosenKey = string.lower( cm.getUnEditableData( "menu_key", "f1" ) )
-    if key ~= chosenKey then return end
+    local chosenKey = cm.getUnEditableData( "menu_key", KEY_F1 )
+    if buttonId ~= chosenKey then return end
 
     cm.toggleMenu()
-    return true
 end )
 
 if cm.getClientData( "auto_open_on_join", true ) then
