@@ -63,7 +63,9 @@ function FRAME:fadeOut()
 
     self.fadingOut = true
 
-    self.background:MoveTo( 0.1, 0, cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
+
+    local isAtZero = select( 1, self.background:GetPos() ) == 0 and true or false
+    self.background:MoveTo( 0.1, 0, isAtZero and 0 or cm.getClientData( "element_pressed_fade_time", 0.5 ), 0, -1, function()
         self:AlphaTo( 0, cm.getClientData( "fade_time", 0.5 ), 0, function()
             self.fadingOut = false
             self:Close()
@@ -114,18 +116,16 @@ function FRAME:setUp()
         surface.DrawTexturedRect( scrW * 0.75, 0, scrW * 0.25, h )
     end
 
-    self.leftLayout = self:Add( "DIconLayout" )
-    self.leftLayout:Dock( LEFT )
-    self.leftLayout:DockMargin( 0, -24, 0, 0 )
-    self.leftLayout:SetWide( 160 )
-    self.leftLayout:SetSpaceX( 4 )
+    self.leftPanel = self:Add( "DPanel" )
+    self.leftPanel:Dock( LEFT )
+    self.leftPanel:DockMargin( 0, -24, 0, 0 )
+    self.leftPanel:SetWide( 160 )
 
     local elementsCol = cm.getClientData( "theme_elements_color", color_white )
     elementsCol = Color( elementsCol.r, elementsCol.g, elementsCol.b, 75 )
-    self.leftLayout.Paint = function( pnl, w, h )
+    self.leftPanel.Paint = function( pnl, w, h )
         surface.SetDrawColor( elementsCol )
-        surface.SetMaterial( gradient )
-        surface.DrawTexturedRect( w - 1, 0, 1, h )
+        surface.DrawRect( w - 1, 0, 1, h )
     end
 
     self.buttonLayout = self:Add( "DIconLayout" )
